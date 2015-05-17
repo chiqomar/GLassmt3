@@ -7,6 +7,8 @@
 #include "tinyfiledialogs.h"
 #include "light.h"
 
+static int fill_type = GL_FILL,culling = GL_FRONT_AND_BACK;
+
 int window_id;
 
 scenehdl scene;
@@ -51,8 +53,6 @@ void init()
 {
 	for (int i = 0; i < 256; i++)
 		keys[i] = false;
-	canvas.working_directory = working_directory;
-	scene.canvas = &canvas;
 	scene.cameras.push_back(new frustumhdl());
 	scene.objects.push_back(new pyramidhdl(1.0, 1.0, 8));
 	for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
@@ -70,10 +70,57 @@ void init()
 	if (!scene.active_camera_valid())
 	{
 		scene.active_camera = scene.cameras.size()-1;
-		scene.cameras[scene.active_camera]->project(&canvas);
+		scene.cameras[scene.active_camera]->project();
 	}
 	scene.cameras[scene.active_camera]->position[2] = 10.0;
 }
+
+
+
+void unproject(vec3f &position, int x, int y, double z)
+{
+    GLdouble modelview[16];
+    GLdouble proj[16];
+    GLint view[4];
+    
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+    glGetDoublev(GL_PROJECTION_MATRIX, proj);
+    glGetIntegerv(GL_VIEWPORT, view);
+    
+    GLdouble positionGL[3];
+    
+    gluUnProject(GLdouble(x), GLdouble(y), z, modelview, proj, view, &positionGL[0], &positionGL[1], &positionGL[2]);
+    position = vec3f(positionGL[0],positionGL[1],positionGL[2]);
+}
+
+void dunproject(vec3f &position, int x, int y, double z)
+{
+    GLdouble modelview[16];
+    GLdouble proj[16];
+    GLint view[4];
+    
+    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+    glGetDoublev(GL_PROJECTION_MATRIX, proj);
+    glGetIntegerv(GL_VIEWPORT, view);
+    
+    GLdouble positionGL[3];
+    
+    gluUnProject(2.0*(float)x/(float)(width-1) - 1.0, 2.0*(float)(height - 1 - y)/(float)(height-1) - 1.0, z, modelview, proj, view, &positionGL[0], &positionGL[1], &positionGL[2]);
+    position = vec3f(positionGL[0],positionGL[1],positionGL[2]);
+}
+
+void unproject(vec3f &position, int x, int y)
+{
+    unproject(position, x, y, 1.0f);
+}
+
+void dunproject(vec3f &position, int x, int y)
+{
+    dunproject(position, x, y, 1.04f);
+}
+              
+
+
 
 void displayfunc()
 {
@@ -139,13 +186,16 @@ void pmotionfunc(int x, int y)
 		{
 			if (scene.cameras[scene.active_camera]->type == "ortho")
 			{
-				position = canvas.unproject(canvas.to_window(vec2i(x, y)));
+				unproject(position,x,y);
 				direction = ror3(vec3f(0.0f, 0.0f, 1.0f), scene.cameras[scene.active_camera]->orientation);
 			}
+            //otherwise, perspective camera...
 			else
 			{
 				position = scene.cameras[scene.active_camera]->position;
-				direction = norm(canvas.unproject(canvas.to_window(vec2i(x, y))));
+                vec3f direct;
+                unproject(direct, x, y);
+                direction = norm(direct);
 			}
 		}
 
@@ -247,13 +297,15 @@ void motionfunc(int x, int y)
 		{
 			if (scene.cameras[scene.active_camera]->type == "ortho")
 			{
-				position = canvas.unproject(canvas.to_window(vec2i(x, y)));
+				unproject(position,x,y);
 				direction = ror3(vec3f(0.0f, 0.0f, 1.0f), scene.cameras[scene.active_camera]->orientation);
 			}
 			else
 			{
 				position = scene.cameras[scene.active_camera]->position;
-				direction = norm(canvas.unproject(canvas.to_window(vec2i(x, y))));
+                vec3f direct;
+                unproject(direct, x, y);
+                direction = norm(direct);
 			}
 		}
 
@@ -321,7 +373,7 @@ void motionfunc(int x, int y)
 				manipulator == manipulate::height ||
 				manipulator == manipulate::front ||
 				manipulator == manipulate::back)
-				scene.cameras[scene.active_camera]->project(&canvas);
+				scene.cameras[scene.active_camera]->project();
 		}
 
 		glutPostRedisplay();
@@ -521,7 +573,7 @@ void canvas_menu(int num)
 		if (!scene.active_camera_valid())
 		{
 			scene.active_camera = scene.cameras.size()-1;
-			scene.cameras[scene.active_camera]->project(&canvas);
+			scene.cameras[scene.active_camera]->project();
 		}
 	}
 	else if (num == 19)
@@ -543,7 +595,7 @@ void canvas_menu(int num)
 		if (!scene.active_camera_valid())
 		{
 			scene.active_camera = scene.cameras.size()-1;
-			scene.cameras[scene.active_camera]->project(&canvas);
+			scene.cameras[scene.active_camera]->project();
 		}
 	}
 	else if (num == 20)
@@ -565,35 +617,39 @@ void canvas_menu(int num)
 		if (!scene.active_camera_valid())
 		{
 			scene.active_camera = scene.cameras.size()-1;
-			scene.cameras[scene.active_camera]->project(&canvas);
+			scene.cameras[scene.active_camera]->project();
 		}
 	}
-	else if (num == 21)
-		canvas.polygon_mode = canvashdl::point;
-	else if (num == 22)
-		canvas.polygon_mode = canvashdl::line;
-	else if (num == 23)
-		canvas.polygon_mode = canvashdl::fill;
-	else if (num == 24)
-		canvas.shade_model = canvashdl::none;
-	else if (num == 25)
-		canvas.shade_model = canvashdl::flat;
-	else if (num == 26)
-		canvas.shade_model = canvashdl::gouraud;
-	else if (num == 27)
-		canvas.shade_model = canvashdl::phong;
-	else if (num == 28)
-		canvas.culling = canvashdl::disable;
-	else if (num == 29)
-		canvas.culling = canvashdl::backface;
-	else if (num == 30)
-		canvas.culling = canvashdl::frontface;
-	else if (num == 31)
-		scene.render_normals = scenehdl::none;
-	else if (num == 32)
-		scene.render_normals = scenehdl::face;
-	else if (num == 33)
-		scene.render_normals = scenehdl::vertex;
+    else if (num == 21)
+        glPolygonMode(culling, fill_type = GL_POINT);
+    else if (num == 22)
+        glPolygonMode(culling, fill_type = GL_LINE);
+    else if (num == 23)
+        glPolygonMode(culling, fill_type = GL_FILL);
+    else if (num == 28)
+        glPolygonMode(culling = GL_FRONT_AND_BACK, fill_type);
+    else if (num == 29)
+        glPolygonMode(culling = GL_BACK, fill_type);
+    else if (num == 30)
+        glPolygonMode(culling = GL_FRONT, fill_type);
+    else if (num == 31)
+        scene.render_normals = scenehdl::none;
+    else if (num == 32)
+        scene.render_normals = scenehdl::face;
+    else if (num == 33)
+        scene.render_normals = scenehdl::vertex;
+    else if (num == 24)
+        scene.shade_model = scenehdl::nosh;
+    else if (num == 25)
+        scene.shade_model = scenehdl::white;
+    else if (num == 26)
+        scene.shade_model = scenehdl::gouraud;
+    else if (num == 27)
+        scene.shade_model = scenehdl::phong;
+    else if (num == 34)
+        scene.shade_model = scenehdl::brick;
+    else if (num == 35)
+        scene.shade_model = scenehdl::texture;
 
 	glutPostRedisplay();
 }
@@ -641,7 +697,7 @@ void object_menu(int num)
 				scene.active_camera = i;
 
 		if (scene.active_camera_valid())
-			scene.cameras[scene.active_camera]->project(&canvas);
+			scene.cameras[scene.active_camera]->project();
 
 		glutPostRedisplay();
 	}
@@ -828,11 +884,13 @@ void create_menu()
 	glutAddMenuEntry(" Range 3250  ",  11);
 
 
-	int shading_id = glutCreateMenu(canvas_menu);
-	glutAddMenuEntry(" None        ", 24);
-	glutAddMenuEntry(" Flat        ", 25);
-	glutAddMenuEntry(" Gouraud     ", 26);
-	glutAddMenuEntry(" Phong       ", 27);
+    int shading_id = glutCreateMenu(canvas_menu);
+    glutAddMenuEntry(" None        ", 24);
+    glutAddMenuEntry(" White       ", 25);
+    glutAddMenuEntry(" Gouraud     ", 26);
+    glutAddMenuEntry(" Phong       ", 27);
+    glutAddMenuEntry(" Brick       ", 34);
+    glutAddMenuEntry(" Texture     ", 35);
 
 	int culling_id = glutCreateMenu(canvas_menu);
 	glutAddMenuEntry(" None        ", 28);

@@ -26,6 +26,16 @@ struct scenehdl
 		face = 1,
 		vertex = 2
 	} render_normals;
+    
+    enum
+    {
+        nosh = 0,
+        white = 1,
+        gouraud = 2,
+        phong = 3,
+        brick = 4,
+        texture = 5
+    } shade_model;
 
 	// Whether or not to render the lights or the cameras or both
 	bool render_lights;

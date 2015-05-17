@@ -48,6 +48,7 @@ struct objecthdl
 	vec6f bound;
 
 	void draw(const vector<lighthdl*> &lights);
+    void bound_draw(vector<vec8f> &geometry, vector<int> &indices);
 	void draw_bound();
 	void draw_normals(bool face = false);
 };

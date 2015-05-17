@@ -18,18 +18,18 @@ camerahdl::~camerahdl()
 
 void camerahdl::view()
 {
-	canvas->load_identity();
+	glLoadIdentity();
 	if (focus == NULL)
 	{
-		canvas->rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
-		canvas->rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
-		canvas->rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
-		canvas->translate(-position);
+		glRotatef(-orientation[0], vec3f(1.0, 0.0, 0.0));
+		glRotatef(-orientation[1], vec3f(0.0, 1.0, 0.0));
+		glRotatef(-orientation[2], vec3f(0.0, 0.0, 1.0));
+		glTranslatef(-position);
 	}
 	else
 	{
 		position = focus->position + ror3(vec3f(0.0, 0.0, radius), orientation);
-		canvas->look_at(position,
+		gluLookAt(position,
 						focus->position,
 						ror3(vec3f(0.0, 1.0, 0.0), orientation));
 	}
@@ -59,10 +59,10 @@ orthohdl::~orthohdl()
 
 void orthohdl::project()
 {
-	canvas->set_matrix(canvashdl::projection_matrix);
-	canvas->load_identity();
-	canvas->ortho(left, right, bottom, top, front, back);
-	canvas->set_matrix(canvashdl::modelview_matrix);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(left, right, bottom, top, front, back);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 frustumhdl::frustumhdl()
@@ -83,10 +83,10 @@ frustumhdl::~frustumhdl()
 
 void frustumhdl::project()
 {
-	canvas->set_matrix(canvashdl::projection_matrix);
-	canvas->load_identity();
-	canvas->frustum(left, right, bottom, top, front, back);
-	canvas->set_matrix(canvashdl::modelview_matrix);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum(left, right, bottom, top, front, back);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 perspectivehdl::perspectivehdl()
@@ -105,8 +105,8 @@ perspectivehdl::~perspectivehdl()
 
 void perspectivehdl::project()
 {
-	canvas->set_matrix(canvashdl::projection_matrix);
-	canvas->load_identity();
-	canvas->perspective(fovy, aspect, front, back);
-	canvas->set_matrix(canvashdl::modelview_matrix);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(fovy, aspect, front, back);
+	glMatrixMode(GL_MODELVIEW);
 }

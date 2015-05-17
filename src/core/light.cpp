@@ -27,7 +27,7 @@ directionalhdl::directionalhdl() : lighthdl(white*0.1f, white*0.5f, white)
 	type = "directional";
 }
 
-directionalhdl::directionalhdl(const vec3f &direction, const vec3f &ambient, const vec3f &diffuse, const vec3f &specular) : lighthdl(ambient, diffuse, specular)
+directionalhdl::directionalhdl(const vec3f &direction, const vec3f &ambient, const vec3f &diffuse, const vec3f &specular)
 {
 	type = "directional";
 }
@@ -39,20 +39,20 @@ directionalhdl::~directionalhdl()
 
 void directionalhdl::update()
 {
-	if (canvas != NULL && model != NULL)
+	if (model != NULL)
 	{
-		canvas->translate(model->position);
-		canvas->rotate(model->orientation[0], vec3f(1.0, 0.0, 0.0));
-		canvas->rotate(model->orientation[1], vec3f(0.0, 1.0, 0.0));
-		canvas->rotate(model->orientation[2], vec3f(0.0, 0.0, 1.0));
+		glTranslatef(model->position);
+		glRotatef(model->orientation[0], vec3f(1.0, 0.0, 0.0));
+		glRotatef(model->orientation[1], vec3f(0.0, 1.0, 0.0));
+		glRotatef(model->orientation[2], vec3f(0.0, 0.0, 1.0));
 
 		canvas->update_normal_matrix();
 		direction = canvas->matrices[canvashdl::normal_matrix]*vec4f(0.0, 0.0, -1.0, 0.0);
 
-		canvas->rotate(-model->orientation[2], vec3f(0.0, 0.0, 1.0));
-		canvas->rotate(-model->orientation[1], vec3f(0.0, 1.0, 0.0));
-		canvas->rotate(-model->orientation[0], vec3f(1.0, 0.0, 0.0));
-		canvas->translate(-model->position);
+		glRotatef(-model->orientation[2], vec3f(0.0, 0.0, 1.0));
+		glRotatef(-model->orientation[1], vec3f(0.0, 1.0, 0.0));
+		glRotatef(-model->orientation[0], vec3f(1.0, 0.0, 0.0));
+		glTranslatef(-model->position);
 	}
 }
 
@@ -79,22 +79,22 @@ pointhdl::~pointhdl()
 
 }
 
-void pointhdl::update(canvashdl *canvas)
+void pointhdl::update()
 {
-	if (canvas != NULL && model != NULL)
+	if (model != NULL)
 	{
-		canvas->translate(model->position);
-		canvas->rotate(model->orientation[0], vec3f(1.0, 0.0, 0.0));
-		canvas->rotate(model->orientation[1], vec3f(0.0, 1.0, 0.0));
-		canvas->rotate(model->orientation[2], vec3f(0.0, 0.0, 1.0));
+		glTranslatef(model->position);
+		glRotatef(model->orientation[0], vec3f(1.0, 0.0, 0.0));
+		glRotatef(model->orientation[1], vec3f(0.0, 1.0, 0.0));
+		glRotatef(model->orientation[2], vec3f(0.0, 0.0, 1.0));
 
 		vec4f p = canvas->matrices[canvashdl::modelview_matrix]*vec4f(0.0, 0.0, 0.0, 1.0);
 		position = p(0,3)/p[3];
 
-		canvas->rotate(-model->orientation[2], vec3f(0.0, 0.0, 1.0));
-		canvas->rotate(-model->orientation[1], vec3f(0.0, 1.0, 0.0));
-		canvas->rotate(-model->orientation[0], vec3f(1.0, 0.0, 0.0));
-		canvas->translate(-model->position);
+		glRotatef(-model->orientation[2], vec3f(0.0, 0.0, 1.0));
+		glRotatef(-model->orientation[1], vec3f(0.0, 1.0, 0.0));
+		glRotatef(-model->orientation[0], vec3f(1.0, 0.0, 0.0));
+		glTranslatef(-model->position);
 	}
 }
 
@@ -125,32 +125,25 @@ spothdl::~spothdl()
 
 }
 
-void spothdl::update(canvashdl *canvas)
+void spothdl::update()
 {
 	if (canvas != NULL && model != NULL)
 	{
-		canvas->translate(model->position);
-		canvas->rotate(model->orientation[0], vec3f(1.0, 0.0, 0.0));
-		canvas->rotate(model->orientation[1], vec3f(0.0, 1.0, 0.0));
-		canvas->rotate(model->orientation[2], vec3f(0.0, 0.0, 1.0));
+		glTranslatef(model->position);
+		glRotatef(model->orientation[0], vec3f(1.0, 0.0, 0.0));
+		glRotatef(model->orientation[1], vec3f(0.0, 1.0, 0.0));
+		glRotatef(model->orientation[2], vec3f(0.0, 0.0, 1.0));
 
 		vec4f p = canvas->matrices[canvashdl::modelview_matrix]*vec4f(0.0, 0.0, 0.0, 1.0);
 		position = p(0,3)/p[3];
 		canvas->update_normal_matrix();
 		direction = canvas->matrices[canvashdl::normal_matrix]*vec4f(0.0, 0.0, -1.0, 0.0);
 
-		canvas->rotate(-model->orientation[2], vec3f(0.0, 0.0, 1.0));
-		canvas->rotate(-model->orientation[1], vec3f(0.0, 1.0, 0.0));
-		canvas->rotate(-model->orientation[0], vec3f(1.0, 0.0, 0.0));
-		canvas->translate(-model->position);
+		glRotatef(-model->orientation[2], vec3f(0.0, 0.0, 1.0));
+		glRotatef(-model->orientation[1], vec3f(0.0, 1.0, 0.0));
+		glRotatef(-model->orientation[0], vec3f(1.0, 0.0, 0.0));
+		glTranslatef(-model->position);
 	}
-}
-
-void spothdl::update()
-{
-	/* TODO Assignment 2: Update both the direction and position of the light using the position and orientation
-	 * of the attached model. See above.
-	 */
 }
 
 void spothdl::apply(string name, GLuint program)

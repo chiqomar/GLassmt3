@@ -16,7 +16,15 @@ rigidhdl::~rigidhdl()
  */
 void rigidhdl::draw()
 {
-	canvas->draw_triangles(geometry, indices);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    //   glEnableClientState(GL_NORMAL_ARRAY);
+    //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    
+    glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data() );
+    glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
+    glDisableClientState(GL_VERTEX_ARRAY);
+    //   glDisableClientState(GL_NORMAL_ARRAY);
+    //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 objecthdl::objecthdl()
@@ -50,6 +58,17 @@ objecthdl::~objecthdl()
 	material.clear();
 }
 
+void objecthdl::bound_draw(	vector<vec8f> &geometry, vector<int> &indices)
+{
+    rigid.back().material.clear();
+    rigid.back().material = "default";
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data());
+    glDrawElements(GL_LINES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
+    geometry.clear();
+    indices.clear();
+}
+
 /* draw
  *
  * Draw the model. Don't forget to apply the transformations necessary
@@ -57,23 +76,25 @@ objecthdl::~objecthdl()
  */
 void objecthdl::draw(const vector<lighthdl*> &lights)
 {
-	canvas->translate(position);
-	canvas->rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas->rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas->rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas->scale(vec3f(scale, scale, scale));
+	glTranslatef(position[0],position[1],position[2]);
+	glRotatef(orientation[0], 1.0, 0.0, 0.0);
+	glRotatef(orientation[1], 0.0, 1.0, 0.0);
+	glRotatef(orientation[2], 0.0, 0.0, 1.0);
+	glScalef(scale, scale, scale);
 
 	for (int i = 0; i < rigid.size(); i++)
 	{
-		canvas->uniform["material"] = material[rigid[i].material];
-		rigid[i].draw(canvas);
-	}
+        if (material[rigid[i].material] == NULL)
+            material.insert(pair<string, materialhdl*>("default", new gouraudhdl()));
+        material["default"]->apply(lights);
+        rigid[i].draw();
+    }
 
-	canvas->scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
-	canvas->rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas->rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas->rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas->translate(-position);
+	glScalef(1.0/scale, 1.0/scale, 1.0/scale);
+	glRotatef(-orientation[2], 0.0, 0.0, 1.0);
+	glRotatef(-orientation[1], 0.0, 1.0, 0.0);
+	glRotatef(-orientation[0], 1.0, 0.0, 0.0);
+	glTranslatef(-position[0],-position[1],-position[2]);
 }
 
 /* draw_bound
@@ -83,11 +104,11 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
  */
 void objecthdl::draw_bound()
 {
-	canvas->translate(position);
-	canvas->rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas->rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas->rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas->scale(vec3f(scale, scale, scale));
+	glTranslatef(position[0],position[1],position[2]);
+	glRotatef(orientation[0], 1.0, 0.0, 0.0);
+	glRotatef(orientation[1], 0.0, 1.0, 0.0);
+	glRotatef(orientation[2], 0.0, 0.0, 1.0);
+	glScalef(scale, scale, scale);
 	vector<vec8f> bound_geometry;
 	vector<int> bound_indices;
 	bound_geometry.reserve(8);
@@ -109,13 +130,14 @@ void objecthdl::draw_bound()
 		bound_indices.push_back(i);
 		bound_indices.push_back(4+i);
 	}
-	canvas->uniform["material"] = NULL;
-	canvas->draw_lines(bound_geometry, bound_indices);
-	canvas->scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
-	canvas->rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas->rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas->rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas->translate(-position);
+    
+    bound_draw(bound_geometry, bound_indices);
+    
+	glScalef(1.0/scale, 1.0/scale, 1.0/scale);
+	glRotatef(-orientation[2], 0.0, 0.0, 1.0);
+	glRotatef(-orientation[1], 0.0, 1.0, 0.0);
+	glRotatef(-orientation[0], 1.0, 0.0, 0.0);
+	glTranslatef(-position[0],-position[1],-position[2]);
 }
 
 /* draw_normals
@@ -134,11 +156,11 @@ void objecthdl::draw_normals(bool face)
 	vector<vec8f> normal_geometry;
 	vector<int> normal_indices;
 
-	canvas->translate(position);
-	canvas->rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas->rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas->rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas->scale(vec3f(scale, scale, scale));
+    glTranslatef(position[0],position[1],position[2]);
+    glRotatef(orientation[0], 1.0, 0.0, 0.0);
+    glRotatef(orientation[1], 0.0, 1.0, 0.0);
+    glRotatef(orientation[2], 0.0, 0.0, 1.0);
+    glScalef(scale, scale, scale);
 	for (int i = 0; i < rigid.size(); i++)
 	{
 		if (!face)
@@ -173,14 +195,11 @@ void objecthdl::draw_normals(bool face)
 			}
 		}
 
-		canvas->uniform["material"] = NULL;
-		canvas->draw_lines(normal_geometry, normal_indices);
-		normal_geometry.clear();
-		normal_indices.clear();
+        bound_draw(normal_geometry, normal_indices);
 	}
-	canvas->scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
-	canvas->rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas->rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas->rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas->translate(-position);
+    glScalef(1.0/scale, 1.0/scale, 1.0/scale);
+    glRotatef(-orientation[2], 0.0, 0.0, 1.0);
+    glRotatef(-orientation[1], 0.0, 1.0, 0.0);
+    glRotatef(-orientation[0], 1.0, 0.0, 0.0);
+    glTranslatef(-position[0],-position[1],-position[2]);
 }

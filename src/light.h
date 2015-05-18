@@ -33,6 +33,9 @@ struct directionalhdl : lighthdl
 	directionalhdl();
 	directionalhdl(const vec3f &direction, const vec3f &ambient, const vec3f &diffuse, const vec3f &specular);
 	~directionalhdl();
+    
+    string di = "di[";
+    static int count;
 
 	// Updated
 	vec3f direction;
@@ -46,6 +49,9 @@ struct pointhdl : lighthdl
 	pointhdl();
 	pointhdl(const vec3f &position, const vec3f &attenuation, const vec3f &ambient, const vec3f &diffuse, const vec3f &specular);
 	~pointhdl();
+    
+    string pt = "pt[";
+    static int count;
 
 	// Constant
 	vec3f attenuation;
@@ -62,6 +68,9 @@ struct spothdl : lighthdl
 	spothdl();
 	spothdl(const vec3f &attenuation, const float &cutoff, const float &exponent, const vec3f &ambient, const vec3f &diffuse, const vec3f &specular);
 	~spothdl();
+    
+    string sp = "sp[";
+    static int count;
 
 	// Constant
 	vec3f attenuation;

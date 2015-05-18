@@ -89,7 +89,7 @@ void unproject(vec3f &position, int x, int y, double z)
     
     GLdouble positionGL[3];
     
-    gluUnProject(GLdouble(x), GLdouble(y), z, modelview, proj, view, &positionGL[0], &positionGL[1], &positionGL[2]);
+    gluUnProject(GLdouble(x), height - GLdouble(y), z, modelview, proj, view, &positionGL[0], &positionGL[1], &positionGL[2]);
     position = vec3f(positionGL[0],positionGL[1],positionGL[2]);
 }
 
@@ -501,7 +501,7 @@ void canvas_menu(int num)
 	{
 		scene.lights.push_back(new directionalhdl());
 		scene.objects.push_back(new cylinderhdl(0.25, 1.0, 8));
-		((uniformhdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
+		//((uniformhdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
 		for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 			for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 			{
@@ -518,14 +518,14 @@ void canvas_menu(int num)
 	{
 		scene.lights.push_back(new pointhdl());
 		scene.objects.push_back(new spherehdl(0.25, 4, 8));
-		((uniformhdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
+		//((uniformhdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
 		scene.lights.back()->model = scene.objects.back();
 	}
 	else if (num == 9)
 	{
 		scene.lights.push_back(new spothdl());
 		scene.objects.push_back(new pyramidhdl(0.25, 1.0, 8));
-		((uniformhdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
+		//((uniformhdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
 		for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 			for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 			{

@@ -21,17 +21,17 @@ void camerahdl::view()
 	glLoadIdentity();
 	if (focus == NULL)
 	{
-		glRotatef(-orientation[0], vec3f(1.0, 0.0, 0.0));
-		glRotatef(-orientation[1], vec3f(0.0, 1.0, 0.0));
-		glRotatef(-orientation[2], vec3f(0.0, 0.0, 1.0));
-		glTranslatef(-position);
+		glRotatef(-orientation[0], 1.0, 0.0, 0.0);
+		glRotatef(-orientation[1], 0.0, 1.0, 0.0);
+		glRotatef(-orientation[2], 0.0, 0.0, 1.0);
+		glTranslatef(-position[0],-position[1],-position[2]);
 	}
 	else
 	{
 		position = focus->position + ror3(vec3f(0.0, 0.0, radius), orientation);
-		gluLookAt(position,
-						focus->position,
-						ror3(vec3f(0.0, 1.0, 0.0), orientation));
+        gluLookAt(position[0], position[1], position[2],
+                  focus->position[0], focus->position[1], focus->position[2],
+                  0.0, 1.0, 0.0);
 	}
 
 	if (model != NULL)

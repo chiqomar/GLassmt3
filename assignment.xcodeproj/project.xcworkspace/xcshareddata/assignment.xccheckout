@@ -14,6 +14,8 @@
 		<string>hal-01.csl.cornell.edu:~/cs5620/skeleton.git</string>
 		<key>C1CA74CA626F75D4D0150E23757CC46E17E4FD10</key>
 		<string>https://github.com/chiqomar/GLassmt3.git</string>
+		<key>D0221DE4EF79F16D687B7757B058D2484663DACF</key>
+		<string>https://github.com/cornell-cs5620/assignment1.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>assignment.xcodeproj</string>
@@ -23,6 +25,8 @@
 		<string>../../../skeleton</string>
 		<key>C1CA74CA626F75D4D0150E23757CC46E17E4FD10</key>
 		<string>../..</string>
+		<key>D0221DE4EF79F16D687B7757B058D2484663DACF</key>
+		<string>../..src/core/assignment1/</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/chiqomar/GLassmt3.git</string>
@@ -32,6 +36,14 @@
 	<string>C1CA74CA626F75D4D0150E23757CC46E17E4FD10</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D0221DE4EF79F16D687B7757B058D2484663DACF</string>
+			<key>IDESourceControlWCCName</key>
+			<string>assignment1</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>

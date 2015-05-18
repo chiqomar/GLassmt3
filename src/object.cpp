@@ -19,10 +19,10 @@ void rigidhdl::draw()
     glEnableClientState(GL_VERTEX_ARRAY);
     //   glEnableClientState(GL_NORMAL_ARRAY);
     //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    
     glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data() );
     glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
     glDisableClientState(GL_VERTEX_ARRAY);
+    
     //   glDisableClientState(GL_NORMAL_ARRAY);
     //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
@@ -60,13 +60,19 @@ objecthdl::~objecthdl()
 
 void objecthdl::bound_draw(	vector<vec8f> &geometry, vector<int> &indices)
 {
+    int curr_prog;
+    glGetIntegerv(GL_CURRENT_PROGRAM,&curr_prog);
     rigid.back().material.clear();
     rigid.back().material = "default";
+    if (curr_prog != materialhdl::progmap["white"])
+        glUseProgram(materialhdl::progmap["white"]);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data());
     glDrawElements(GL_LINES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
     geometry.clear();
     indices.clear();
+    if (curr_prog != materialhdl::progmap["white"])
+        glUseProgram(curr_prog);
 }
 
 /* draw

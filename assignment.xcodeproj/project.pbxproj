@@ -7,11 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2DA710C51B090ECB00FBE622 /* light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA710C11B090ECB00FBE622 /* light.cpp */; };
 		2DA710C61B090ECB00FBE622 /* lodepng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA710C31B090ECB00FBE622 /* lodepng.cpp */; };
 		2DA710C91B090F1900FBE622 /* material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA710C71B090F1900FBE622 /* material.cpp */; };
+		2DA710CD1B09431500FBE622 /* light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA710CB1B09431500FBE622 /* light.cpp */; };
 		C5EE0A6E1A71517000FAF23F /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5EE0A531A71517000FAF23F /* camera.cpp */; };
-		C5EE0A6F1A71517000FAF23F /* canvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5EE0A551A71517000FAF23F /* canvas.cpp */; };
 		C5EE0A701A71517000FAF23F /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5EE0A581A71517000FAF23F /* color.cpp */; };
 		C5EE0A711A71517000FAF23F /* math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5EE0A5B1A71517000FAF23F /* math.cpp */; };
 		C5EE0A721A71517000FAF23F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5EE0A5F1A71517000FAF23F /* main.cpp */; };
@@ -38,12 +37,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2DA710C11B090ECB00FBE622 /* light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = light.cpp; path = core/light.cpp; sourceTree = "<group>"; };
-		2DA710C21B090ECB00FBE622 /* light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = light.h; path = core/light.h; sourceTree = "<group>"; };
 		2DA710C31B090ECB00FBE622 /* lodepng.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lodepng.cpp; path = core/lodepng.cpp; sourceTree = "<group>"; };
 		2DA710C41B090ECB00FBE622 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lodepng.h; path = core/lodepng.h; sourceTree = "<group>"; };
 		2DA710C71B090F1900FBE622 /* material.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = material.cpp; sourceTree = "<group>"; };
 		2DA710C81B090F1900FBE622 /* material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = material.h; sourceTree = "<group>"; };
+		2DA710CB1B09431500FBE622 /* light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = light.cpp; sourceTree = "<group>"; };
+		2DA710CC1B09431500FBE622 /* light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = light.h; sourceTree = "<group>"; };
 		C5EE0A261A71506700FAF23F /* assignment */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = assignment; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5EE0A301A71517000FAF23F /* COPYRIGHT.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYRIGHT.txt; sourceTree = "<group>"; };
 		C5EE0A321A71517000FAF23F /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
@@ -78,8 +77,6 @@
 		C5EE0A511A71517000FAF23F /* teapot.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = teapot.obj; sourceTree = "<group>"; };
 		C5EE0A531A71517000FAF23F /* camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = camera.cpp; sourceTree = "<group>"; };
 		C5EE0A541A71517000FAF23F /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
-		C5EE0A551A71517000FAF23F /* canvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = canvas.cpp; sourceTree = "<group>"; };
-		C5EE0A561A71517000FAF23F /* canvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = canvas.h; sourceTree = "<group>"; };
 		C5EE0A581A71517000FAF23F /* color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = color.cpp; sourceTree = "<group>"; };
 		C5EE0A591A71517000FAF23F /* color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = color.h; sourceTree = "<group>"; };
 		C5EE0A5A1A71517000FAF23F /* geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = geometry.h; sourceTree = "<group>"; };
@@ -187,13 +184,11 @@
 			isa = PBXGroup;
 			children = (
 				C5EE0A531A71517000FAF23F /* camera.cpp */,
-				2DA710C11B090ECB00FBE622 /* light.cpp */,
-				2DA710C21B090ECB00FBE622 /* light.h */,
+				2DA710CB1B09431500FBE622 /* light.cpp */,
+				2DA710CC1B09431500FBE622 /* light.h */,
 				2DA710C31B090ECB00FBE622 /* lodepng.cpp */,
 				2DA710C41B090ECB00FBE622 /* lodepng.h */,
 				C5EE0A541A71517000FAF23F /* camera.h */,
-				C5EE0A551A71517000FAF23F /* canvas.cpp */,
-				C5EE0A561A71517000FAF23F /* canvas.h */,
 				C5EE0A571A71517000FAF23F /* core */,
 				C5EE0A5F1A71517000FAF23F /* main.cpp */,
 				C5EE0A601A71517000FAF23F /* model.cpp */,
@@ -288,13 +283,12 @@
 				C5EE0A6E1A71517000FAF23F /* camera.cpp in Sources */,
 				C5EE0A781A71517000FAF23F /* tinyfiledialogs.c in Sources */,
 				2DA710C91B090F1900FBE622 /* material.cpp in Sources */,
-				2DA710C51B090ECB00FBE622 /* light.cpp in Sources */,
+				2DA710CD1B09431500FBE622 /* light.cpp in Sources */,
 				C5EE0A731A71517000FAF23F /* model.cpp in Sources */,
 				C5EE0A741A71517000FAF23F /* object.cpp in Sources */,
 				C5EE0A701A71517000FAF23F /* color.cpp in Sources */,
 				C5EE0A721A71517000FAF23F /* main.cpp in Sources */,
 				C5EE0A761A71517000FAF23F /* primitive.cpp in Sources */,
-				C5EE0A6F1A71517000FAF23F /* canvas.cpp in Sources */,
 				2DA710C61B090ECB00FBE622 /* lodepng.cpp in Sources */,
 				C5EE0A751A71517000FAF23F /* opengl.cpp in Sources */,
 				C5EE0A711A71517000FAF23F /* math.cpp in Sources */,
@@ -385,6 +379,10 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				CONFIGURATION_TEMP_DIR = assignment.build;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
 				LD_MAP_FILE_PATH = "assignment.build/$(PRODUCT_NAME)-LinkMap-$(CURRENT_VARIANT)-$(CURRENT_ARCH).txt";
 				OBJROOT = assignment.build;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -398,6 +396,10 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				CONFIGURATION_TEMP_DIR = assignment.build;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
 				LD_MAP_FILE_PATH = "assignment.build/$(PRODUCT_NAME)-LinkMap-$(CURRENT_VARIANT)-$(CURRENT_ARCH).txt";
 				OBJROOT = assignment.build;
 				PRODUCT_NAME = "$(TARGET_NAME)";

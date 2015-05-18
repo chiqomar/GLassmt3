@@ -25,9 +25,16 @@ struct rigidhdl
 
 	vector<vec8f> geometry;
 	vector<int> indices;
+    
+    //edits
+    vector<vec3f> normals;
+    
+    //edits
+    
 	string material;
 
 	void draw();
+    void loadNormals();
 };
 
 struct objecthdl

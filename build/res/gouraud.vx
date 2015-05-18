@@ -24,6 +24,6 @@ void main()
 
 
   //color = vec4(shadeit(emission,ambient,diffuse,specular,shininess,eye_space_vertex,eye_space_normal),1.0);
-  color = vec4(eye_space_normal.xyz ,1.0) ;
+  color = vec4(xee, xee, yee ,1.0) ;
     gl_Position = gl_ProjectionMatrix * vertex;
 }

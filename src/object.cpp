@@ -17,16 +17,43 @@ rigidhdl::~rigidhdl()
 void rigidhdl::draw()
 {
     glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
+       glEnableClientState(GL_NORMAL_ARRAY);
     //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data() );
-    glNormalPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry[0][3])
+    
+    
+    //for vec8f
+    
+    
+    loadNormals();
+    
+    glNormalPointer(GL_FLOAT, sizeof(GLfloat)*3, this->normals.data());
     glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
     glDisableClientState(GL_VERTEX_ARRAY);
     
        glDisableClientState(GL_NORMAL_ARRAY);
     //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
+
+
+
+void rigidhdl::loadNormals()
+{
+    for (int j = 0; j < this->indices.size(); j+=3)
+    {
+        vec3f normal = norm((vec3f)this->geometry[this->indices[j + 0]](3,6) +
+                            (vec3f)this->geometry[this->indices[j + 1]](3,6) +
+                            (vec3f)this->geometry[this->indices[j + 2]](3,6));
+        //vec3f center = ((vec3f)rigid[i].geometry[rigid[i].indices[j + 0]](0,3) +
+        //                (vec3f)rigid[i].geometry[rigid[i].indices[j + 1]](0,3) +
+        //                (vec3f)rigid[i].geometry[rigid[i].indices[j + 2]](0,3))/3.0f;
+        
+        this->normals.push_back(normal);
+    }
+    
+}
+
+
 
 objecthdl::objecthdl()
 {
@@ -67,6 +94,7 @@ void objecthdl::bound_draw(	vector<vec8f> &geometry, vector<int> &indices)
     rigid.back().material = "default";
     if (curr_prog != materialhdl::progmap["white"])
         glUseProgram(materialhdl::progmap["white"]);
+    cout << "Set shader:" << materialhdl::progmap["white"] << " Curr shader: " << curr_prog <<endl;
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data());
     glDrawElements(GL_LINES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());

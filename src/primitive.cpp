@@ -140,7 +140,7 @@ spherehdl::spherehdl(float radius, int levels, int slices)
 
 	bound = vec6f(-radius, radius, -radius, radius, -radius, radius);
 
-	material.insert(pair<string, materialhdl*>("default", new whitehdl()));
+	material.insert(pair<string, materialhdl*>("default", new gouraudhdl()));
 }
 
 spherehdl::~spherehdl()

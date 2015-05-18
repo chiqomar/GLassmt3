@@ -1,3 +1,5 @@
+#version 120
+
 struct direction {
 vec3 direction;
 vec3 ambient;
@@ -132,4 +134,21 @@ vec3 lights = em + amb * ambLight + dif * difLight + spec * specLight;
 
 return clamp(lights,0.0,1.0);
 
+}
+
+uniform vec3 emission;
+uniform vec3 ambient;
+uniform vec3 diffuse;
+uniform vec3 specular;
+uniform float shininess;
+varying vec4 color;
+
+void main()
+{
+  vec3 eye_space_normal = gl_NormalMatrix * gl_Normal;
+  vec4 vertex = gl_ModelViewMatrix * gl_Vertex;
+  vec3 eye_space_vertex = vertex.xyz;
+  color = vec4(shadeit(emission,ambient,diffuse,specular,shininess,eye_space_vertex,eye_space_normal),1.0);
+  //color = vec4(1.0,3.0,1.0,0.6);
+    gl_Position = gl_ProjectionMatrix * vertex;
 }

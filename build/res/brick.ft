@@ -30,5 +30,5 @@ void main()
 
  vec3 mixed = mix(mortar_color, brick_color, interp.x*interp.y);
 
-  gl_FragColor = vex4(shadeit(empty,mixed,mixed,mixed,1.0,eye_space_vertex,norm),1.0);
+  gl_FragColor = vec4(shadeit(empty,mixed,mixed,mixed,1.0,eye_space_vertex,norm),1.0);
 }

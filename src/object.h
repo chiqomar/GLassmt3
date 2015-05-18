@@ -58,6 +58,7 @@ struct objecthdl
     void bound_draw(vector<vec8f> &geometry, vector<int> &indices);
 	void draw_bound();
 	void draw_normals(bool face = false);
+    void choose_shader(int shade_model);
 };
 
 #endif

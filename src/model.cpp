@@ -125,22 +125,22 @@ void modelhdl::load_obj(string filename)
 
 						if (sscanf(part.c_str(), "%d/%d/%d", &v, &t, &n) == 3)
 						{
-							point.set(0,3, vertices[v-1]);
+							point.set(3,6, vertices[v-1]);
 							point.set(6,8, texcoords[t-1]);
-							point.set(3,6, normals[n-1]);
+							point.set(0,3, normals[n-1]);
 						}
 						else if (sscanf(part.c_str(), "%d//%d", &v, &n) == 2)
 						{
-							point.set(0,3, vertices[v-1]);
-							point.set(3,6, normals[n-1]);
+							point.set(3,6, vertices[v-1]);
+							point.set(0,3, normals[n-1]);
 						}
 						else if (sscanf(part.c_str(), "%d/%d", &v, &t) == 2)
 						{
-							point.set(0,3, vertices[v-1]);
+							point.set(3,6, vertices[v-1]);
 							point.set(6,8, texcoords[t-1]);
 						}
 						else if (sscanf(part.c_str(), "%d", &v) == 1)
-							point.set(0,3, vertices[v-1]);
+							point.set(3,6, vertices[v-1]);
 
 						bound[0] = min(bound[0], point[0]);
 						bound[1] = max(bound[1], point[0]);

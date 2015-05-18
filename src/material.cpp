@@ -91,7 +91,7 @@ gouraudhdl::gouraudhdl()
         fragment = load_shader_file("res/gouraud.ft", GL_FRAGMENT_SHADER);
         program = glCreateProgram();
         progmap.insert(pair<string, int>("gouraud", program));
-        cout << "Program number:" << program <<endl;
+        //cout << "Program number:" << program <<endl;
         printProgramInfoLog(program);
         glAttachShader(program, vertex);
         glAttachShader(program, fragment);
@@ -151,24 +151,14 @@ void gouraudhdl::apply(const vector<lighthdl*> &lights)
     
     for (int j = 0; j < lights.size(); j++)
         if (lights[j] != NULL) {
-            if (lights[j]->type == "directional")
-                directionalhdl::count++;
-            if (lights[j]->type == "spot")
-                spothdl::count++;
-            if (lights[j]->type == "point")
-                pointhdl::count++;
             lights[j]->apply("gouraud", program);
         }
     int dirnum_loc = glGetUniformLocation(program, "dirNum");
     int spotnum_loc = glGetUniformLocation(program, "spotNum");
     int ptnum_loc = glGetUniformLocation(program, "ptNum");
-    glUniform1i(dirnum_loc, dirnum_loc);
-    glUniform1i(spotnum_loc, spotnum_loc);
-    glUniform1i(ptnum_loc, ptnum_loc);
-    
-    directionalhdl::count = -1;
-    spothdl::count = -1;
-    pointhdl::count = -1;
+    glUniform1i(dirnum_loc, directionalhdl::count);
+    glUniform1i(spotnum_loc, spothdl::count);
+    glUniform1i(ptnum_loc, pointhdl::count);
 }
 
 materialhdl *gouraudhdl::clone() const
@@ -200,10 +190,10 @@ phonghdl::phonghdl()
 		 * the class is created.
 		 */
         glEnable(GL_DEPTH_TEST);
-        vertex = load_shader_file("res/white.vx", GL_VERTEX_SHADER);
-        fragment = load_shader_file("res/white.ft", GL_FRAGMENT_SHADER);
+        vertex = load_shader_file("res/phong.vx", GL_VERTEX_SHADER);
+        fragment = load_shader_file("res/phong.ft", GL_FRAGMENT_SHADER);
         program = glCreateProgram();
-        progmap.insert(pair<string, int>("gouraud", program));
+        progmap.insert(pair<string, int>("phong", program));
         printProgramInfoLog(program);
         glAttachShader(program, vertex);
         glAttachShader(program, fragment);
@@ -248,6 +238,32 @@ void phonghdl::apply(const vector<lighthdl*> &lights)
 {
 	// TODO Assignment 3: Apply the shader program and pass it the necessary uniform values
     glUseProgram(program);
+    
+    int emission_location = glGetUniformLocation(program, "emission");
+    int ambient_location = glGetUniformLocation(program, "ambient");
+    int diffuse_location = glGetUniformLocation(program, "diffuse");
+    int specular_location = glGetUniformLocation(program, "specular");
+    int shininess_location = glGetUniformLocation(program, "shininess");
+    
+    glUniform3f(emission_location, emission[0], emission[1],emission[2]);
+    glUniform3f(ambient_location, ambient[0] ,ambient[1] ,ambient[2]);
+    glUniform3f(diffuse_location, diffuse[0], diffuse[1], diffuse[2]);
+    glUniform3f(specular_location, specular[0], specular[1], specular[2]);
+    glUniform1f(shininess_location, shininess);
+    
+    for (int j = 0; j < lights.size(); j++) {
+        
+        if (lights[j] != NULL) {
+            lights[j]->apply("phong", program);
+        }
+        
+    }
+    int dirnum_loc = glGetUniformLocation(program, "dirNum");
+    int spotnum_loc = glGetUniformLocation(program, "spotNum");
+    int ptnum_loc = glGetUniformLocation(program, "ptNum");
+    glUniform1i(dirnum_loc, directionalhdl::count);
+    glUniform1i(spotnum_loc, spothdl::count);
+    glUniform1i(ptnum_loc, pointhdl::count);
 
 }
 
@@ -279,7 +295,7 @@ whitehdl::whitehdl()
         fragment = load_shader_file("res/white.ft", GL_FRAGMENT_SHADER);
         program = glCreateProgram();
         progmap.insert(pair<string, int>("white", program));
-        cout << "Program number:" << program <<endl;
+        //cout << "Program number:" << program <<endl;
         printProgramInfoLog(program);
         glAttachShader(program, vertex);
         glAttachShader(program, fragment);
@@ -394,6 +410,34 @@ void brickhdl::apply(const vector<lighthdl*> &lights)
 {
 	// TODO Assignment 3: Apply the shader program and pass it the necessary uniform values
     glUseProgram(program);
+    
+    // Find the locations of the vertex, normal, and texcoord variables in the shader
+    int brick_size_location = glGetUniformLocation(program, "brick_size");
+    int brick_color_location = glGetUniformLocation(program, "brick_color");
+    int mortar_color_location = glGetUniformLocation(program, "mortar_color");
+    int brick_pct_location = glGetUniformLocation(program, "brick_pct");
+    
+    // Pass in the parameters for the brick shader
+    glUniform1f(brick_size_location, 0.1);
+    glUniform3f(brick_color_location, 0.8, 0.0, 0.0);
+    glUniform3f(mortar_color_location, 0.4, 0.4, 0.4);
+    glUniform2f(brick_pct_location, 0.9, 0.9);
+    
+    // Draw the triangles
+    for (int j = 0; j < lights.size(); j++) {
+        if (lights[j] != NULL)
+            lights[j]->apply("texture", program);
+    }
+    int dirnum_loc = glGetUniformLocation(program, "dirNum");
+    int spotnum_loc = glGetUniformLocation(program, "spotNum");
+    int ptnum_loc = glGetUniformLocation(program, "ptNum");
+    glUniform1i(dirnum_loc, directionalhdl::count);
+    glUniform1i(spotnum_loc, spothdl::count);
+    glUniform1i(ptnum_loc, pointhdl::count);
+    
+    directionalhdl::count = -1;
+    spothdl::count = -1;
+    pointhdl::count = -1;
 
 }
 

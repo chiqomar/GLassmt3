@@ -26,7 +26,7 @@
 		<key>C1CA74CA626F75D4D0150E23757CC46E17E4FD10</key>
 		<string>../..</string>
 		<key>D0221DE4EF79F16D687B7757B058D2484663DACF</key>
-		<string>../..src/core/assignment1/</string>
+		<string>../..src/core/assignment1</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/chiqomar/GLassmt3.git</string>

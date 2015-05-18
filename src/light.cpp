@@ -29,16 +29,18 @@ lighthdl::~lighthdl()
 directionalhdl::directionalhdl() : lighthdl(white*0.1f, white*0.5f, white)
 {
     type = "directional";
+    count++;
 }
 
 directionalhdl::directionalhdl(const vec3f &direction, const vec3f &ambient, const vec3f &diffuse, const vec3f &specular)
 {
     type = "directional";
+    count++;
 }
 
 directionalhdl::~directionalhdl()
 {
-    
+    count--;
 }
 
 void directionalhdl::update()
@@ -107,17 +109,19 @@ pointhdl::pointhdl() : lighthdl(white*0.1f, white*0.5f, white)
 {
     this->attenuation = vec3f(1.0, 0.14, 0.7);
     type = "point";
+    count++;
 }
 
 pointhdl::pointhdl(const vec3f &position, const vec3f &attenuation, const vec3f &ambient, const vec3f &diffuse, const vec3f &specular) : lighthdl(ambient, diffuse, specular)
 {
     this->attenuation = attenuation;
     type = "point";
+    count++;
 }
 
 pointhdl::~pointhdl()
 {
-    
+    count--;
 }
 
 void pointhdl::update()
@@ -187,6 +191,7 @@ spothdl::spothdl() : lighthdl(white*0.1f, white*0.5f, white)
     this->cutoff = 0.5;
     this->exponent = 1.0;
     type = "spot";
+    count++;
 }
 
 spothdl::spothdl(const vec3f &attenuation, const float &cutoff, const float &exponent, const vec3f &ambient, const vec3f &diffuse, const vec3f &specular) : lighthdl(ambient, diffuse, specular)
@@ -195,11 +200,12 @@ spothdl::spothdl(const vec3f &attenuation, const float &cutoff, const float &exp
     this->cutoff = cutoff;
     this->exponent = exponent;
     type = "spot";
+    count++;
 }
 
 spothdl::~spothdl()
 {
-    
+    count--;
 }
 
 void spothdl::update()

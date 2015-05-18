@@ -19,15 +19,13 @@ void rigidhdl::draw()
     glEnableClientState(GL_VERTEX_ARRAY);
        glEnableClientState(GL_NORMAL_ARRAY);
     //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data() );
-    
+    //glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data() );
     
     //for vec8f
     
-    
-    loadNormals();
-    
-    glNormalPointer(GL_FLOAT, sizeof(GLfloat)*3, this->normals.data());
+    glInterleavedArrays(GL_N3F_V3F, sizeof(GLfloat)*8, geometry.data());
+
+    //glNormalPointer(GL_FLOAT, sizeof(GLfloat)*3, this->normals.data());
     glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
     glDisableClientState(GL_VERTEX_ARRAY);
     
@@ -37,21 +35,24 @@ void rigidhdl::draw()
 
 
 
-void rigidhdl::loadNormals()
-{
-    for (int j = 0; j < this->indices.size(); j+=3)
-    {
-        vec3f normal = norm((vec3f)this->geometry[this->indices[j + 0]](3,6) +
-                            (vec3f)this->geometry[this->indices[j + 1]](3,6) +
-                            (vec3f)this->geometry[this->indices[j + 2]](3,6));
-        //vec3f center = ((vec3f)rigid[i].geometry[rigid[i].indices[j + 0]](0,3) +
-        //                (vec3f)rigid[i].geometry[rigid[i].indices[j + 1]](0,3) +
-        //                (vec3f)rigid[i].geometry[rigid[i].indices[j + 2]](0,3))/3.0f;
-        
-        this->normals.push_back(normal);
-    }
-    
-}
+//void rigidhdl::loadNormals()
+//{
+//    for (int j = 0; j < this->indices.size(); j+=3)
+//    {
+//        vec3f normal = norm((vec3f)this->geometry[this->indices[j + 0]](3,6) +
+//                            (vec3f)this->geometry[this->indices[j + 1]](3,6) +
+//                            (vec3f)this->geometry[this->indices[j + 2]](3,6));
+////        vec3f vector = ((vec3f)this->geometry[this->indices[j + 0]](0,3) +
+////                        (vec3f)this->geometry[this->indices[j + 1]](0,3) +
+////                        (vec3f)this->geometry[this->indices[j + 2]](0,3))/3.0f;
+//        //gonna switch positions of the normals and vectors...hopefully the indices are good
+////        vec6f switchup;
+////        switchup.set(0,3,normal);
+////        switchup.set(3,6,vector);
+//        this->normals.push_back(normal);
+//    }
+//    
+//}
 
 
 
@@ -86,6 +87,10 @@ objecthdl::~objecthdl()
 	material.clear();
 }
 
+void objecthdl::choose_shader(int shade_model) {
+    
+}
+
 void objecthdl::bound_draw(	vector<vec8f> &geometry, vector<int> &indices)
 {
     int curr_prog;
@@ -94,7 +99,7 @@ void objecthdl::bound_draw(	vector<vec8f> &geometry, vector<int> &indices)
     rigid.back().material = "default";
     if (curr_prog != materialhdl::progmap["white"])
         glUseProgram(materialhdl::progmap["white"]);
-    cout << "Set shader:" << materialhdl::progmap["white"] << " Curr shader: " << curr_prog <<endl;
+    //cout << "Set shader:" << materialhdl::progmap["white"] << " Curr shader: " << curr_prog <<endl;
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data());
     glDrawElements(GL_LINES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
@@ -215,12 +220,12 @@ void objecthdl::draw_normals(bool face)
 		{
 			for (int j = 0; j < rigid[i].indices.size(); j+=3)
 			{
-				vec3f normal = norm((vec3f)rigid[i].geometry[rigid[i].indices[j + 0]](3,6) +
-									(vec3f)rigid[i].geometry[rigid[i].indices[j + 1]](3,6) +
-									(vec3f)rigid[i].geometry[rigid[i].indices[j + 2]](3,6));
-				vec3f center = ((vec3f)rigid[i].geometry[rigid[i].indices[j + 0]](0,3) +
-								(vec3f)rigid[i].geometry[rigid[i].indices[j + 1]](0,3) +
-								(vec3f)rigid[i].geometry[rigid[i].indices[j + 2]](0,3))/3.0f;
+				vec3f normal = norm((vec3f)rigid[i].geometry[rigid[i].indices[j + 0]](0,3) +
+									(vec3f)rigid[i].geometry[rigid[i].indices[j + 1]](0,3) +
+									(vec3f)rigid[i].geometry[rigid[i].indices[j + 2]](0,3));
+				vec3f center = ((vec3f)rigid[i].geometry[rigid[i].indices[j + 0]](3,6) +
+								(vec3f)rigid[i].geometry[rigid[i].indices[j + 1]](3,6) +
+								(vec3f)rigid[i].geometry[rigid[i].indices[j + 2]](3,6))/3.0f;
 				normal_indices.push_back(normal_geometry.size());
 				normal_geometry.push_back(center);
 				normal_geometry.back().set(3,8,vec5f(0.0, 0.0, 0.0, 0.0, 0.0));

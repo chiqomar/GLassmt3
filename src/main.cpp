@@ -73,11 +73,15 @@ void init()
 		scene.cameras[scene.active_camera]->project();
 	}
 	scene.cameras[scene.active_camera]->position[2] = 10.0;
+    
+    //dummy object added and deleted to activate the white shader...
+    scene.objects.push_back(new boxhdl(0.0,0.0,0.0));
+    scene.objects.erase(scene.objects.begin());
 }
 
 
 
-void unproject(vec3f &position, int x, int y, double z)
+void unproject(vec3f &position, int x, int y, double z = 1.0f)
 {
     GLdouble modelview[16];
     GLdouble proj[16];
@@ -91,11 +95,6 @@ void unproject(vec3f &position, int x, int y, double z)
     
     gluUnProject(GLdouble(x), height - GLdouble(y), z, modelview, proj, view, &positionGL[0], &positionGL[1], &positionGL[2]);
     position = vec3f(positionGL[0],positionGL[1],positionGL[2]);
-}
-
-void unproject(vec3f &position, int x, int y)
-{
-    unproject(position, x, y, 1.0f);
 }
 
 void displayfunc()
@@ -456,13 +455,13 @@ void canvas_menu(int num)
 	if (num == 0)
 		exit(0);
 	else if (num == 1)
-		scene.objects.push_back(new boxhdl(1.0, 1.0, 1.0));
+		scene.objects.push_back(new boxhdl(1.0, 1.0, 1.0, scene.shade_model));
 	else if (num == 2)
-		scene.objects.push_back(new cylinderhdl(1.0, 1.0, 20));
+		scene.objects.push_back(new cylinderhdl(1.0, 1.0, 20, scene.shade_model));
 	else if (num == 3)
-		scene.objects.push_back(new spherehdl(1.0, 10, 20));
+		scene.objects.push_back(new spherehdl(1.0, 10, 20, scene.shade_model));
 	else if (num == 4)
-		scene.objects.push_back(new pyramidhdl(1.0, 1.0, 20));
+		scene.objects.push_back(new pyramidhdl(1.0, 1.0, 20, scene.shade_model));
 	else if (num == 5)
 	{
 		const char* filters[1];
@@ -477,7 +476,7 @@ void canvas_menu(int num)
 	{
 		scene.lights.push_back(new directionalhdl());
 		scene.objects.push_back(new cylinderhdl(0.25, 1.0, 8));
-		((gouraudhdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
+		((phonghdl*)scene.objects.back()->material["default"])->emission = vec3f(.8, .6, .4);
 		for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 			for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 			{
@@ -494,14 +493,14 @@ void canvas_menu(int num)
 	{
 		scene.lights.push_back(new pointhdl());
 		scene.objects.push_back(new spherehdl(0.25, 4, 8));
-		((gouraudhdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
+		((phonghdl*)scene.objects.back()->material["default"])->emission = vec3f(.2, .5, .7);
 		scene.lights.back()->model = scene.objects.back();
 	}
 	else if (num == 9)
 	{
 		scene.lights.push_back(new spothdl());
 		scene.objects.push_back(new pyramidhdl(0.25, 1.0, 8));
-		((gouraudhdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
+		((phonghdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, .1, .9);
 		for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 			for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 			{
@@ -628,6 +627,22 @@ void canvas_menu(int num)
         scene.shade_model = scenehdl::texture;
 
 	glutPostRedisplay();
+}
+
+static int choose_shader(int shade_model) {
+    if (scene.shade_model == scenehdl::nosh)
+        return scenehdl::nosh;
+    if (scene.shade_model == scenehdl::white)
+        return scenehdl::scenehdl::white;
+    if (scene.shade_model == scenehdl::gouraud)
+        return scenehdl::scenehdl::gouraud;
+    if (scene.shade_model == scenehdl::phong)
+        return scenehdl::scenehdl::phong;
+    if (scene.shade_model == scenehdl::brick)
+        return scenehdl::scenehdl::brick;
+    if (scene.shade_model == scenehdl::texture)
+        return scenehdl::texture;
+    return -1;
 }
 
 void object_menu(int num)

@@ -46,6 +46,16 @@ struct objecthdl
 	vector<rigidhdl> rigid;
 	map<string, materialhdl*> material;
 
+    enum
+    {
+        nosh = 0,
+        white = 1,
+        gouraud = 2,
+        phong = 3,
+        brick = 4,
+        texture = 5
+    };
+    
 	vec3f position;
 	vec3f orientation;
 	float scale;

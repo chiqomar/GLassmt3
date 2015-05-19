@@ -61,16 +61,16 @@ void directionalhdl::update()
         mat4f normal_mat;
         
         model_tmp = mat4f((float)modelview_x[0],(float)modelview_x[1],(float)modelview_x[2],(float)modelview_x[3],(float)modelview_x[4],(float)modelview_x[5],(float)modelview_x[6],(float)modelview_x[7],(float)modelview_x[8],(float)modelview_x[9],(float)modelview_x[10],(float)modelview_x[11],(float)modelview_x[12],(float)modelview_x[13],(float)modelview_x[14],(float)modelview_x[15]);
-
-        
-//        model_tmp = mv;
-//        vec4f modelview_v1(modelview_x[0],modelview_x[1],modelview_x),modelview_v2,modelview_v3,modelview_v4;
-//        modelview_v1
-//        model_tmp.set_col(0, vec<float, 4> m)
         
         normal_mat = inverse(transpose(model_tmp));
-        direction = normal_mat * direction;
+        this->direction = normal_mat * direction;
         
+//        int program;
+//        glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+//        string dir_str = di + to_string(count) + "].direction";
+//        int dir_loc = glGetUniformLocation(program, dir_str.c_str());
+//        glUniform3f(dir_loc, direction[0], direction[1],direction[2]);
+
         glRotatef(-model->orientation[2], 0.0, 0.0, 1.0);
         glRotatef(-model->orientation[1], 0.0, 1.0, 0.0);
         glRotatef(-model->orientation[0], 1.0, 0.0, 0.0);
@@ -102,6 +102,7 @@ void directionalhdl::apply(string name, GLuint program)
         glUniform3f(amb_loc, ambient[0] ,ambient[1] ,ambient[2]);
         glUniform3f(spec_loc, specular[0], specular[1], specular[2]);
         glUniform3f(dif_loc, diffuse[0], diffuse[1],diffuse[2]);
+        //cout << "Direction:" <<this->direction[0] << endl;
     }
 }
 
@@ -146,8 +147,8 @@ void pointhdl::update()
         
         vec4f p = model_tmp * position;
         
-        position = p(0,3)/p[3];
-        
+        this->position = p(0,3)/p[3];
+
         glRotatef(-model->orientation[2], 0.0, 0.0, 1.0);
         glRotatef(-model->orientation[1], 0.0, 1.0, 0.0);
         glRotatef(-model->orientation[0], 1.0, 0.0, 0.0);
@@ -231,11 +232,11 @@ void spothdl::update()
         
         vec4f p = model_tmp * position;
         
-        position = p(0,3)/p[3];
+        this->position = p(0,3)/p[3];
         
         normal_mat = inverse(transpose(model_tmp));
-        direction = normal_mat * direction;
-                
+        this->direction = normal_mat * direction;
+        
         glRotatef(-model->orientation[2], 0.0, 0.0, 1.0);
         glRotatef(-model->orientation[1], 0.0, 1.0, 0.0);
         glRotatef(-model->orientation[0], 1.0, 0.0, 0.0);

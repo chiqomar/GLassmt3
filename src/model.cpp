@@ -212,7 +212,7 @@ void modelhdl::load_mtl(string filename)
 					material[current_material] = new phonghdl();
 				else if (type == "brick")
 					material[current_material] = new brickhdl();
-				else if (type == "gouraud")
+				else if (type == "texture")
 					material[current_material] = new texturehdl();
 			}
 			else if (command == "Ke" && type == "gouraud")

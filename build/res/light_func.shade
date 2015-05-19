@@ -119,15 +119,18 @@ vec3 shadeit(vec3 em, vec3 amb, vec3 dif, vec3 spec, float shiny, vec3 vertex, v
 	vec3 difLight = vec3(0.0, 0.0, 0.0);
 	vec3 specLight = vec3(0.0, 0.0, 0.0);
 
-  for (int i = 0; i < dirNum; i++) {
+  for (int i = 0; i < dirNum + 1; i++) {
     direction_light(ambLight,difLight,specLight,vertex,normal,shiny,di[i]);
 }
-for (int i = 0; i < ptNum; i++) {
+
+for (int i = 0; i < ptNum + 1; i++) {
   point_light(ambLight,difLight,specLight,vertex,normal,shiny,pt[i]);
 }
-for (int i = 0; i < spotNum; i++) {
+
+for (int i = 0; i < spotNum + 1; i++) {
   spot_light(ambLight,difLight,specLight,vertex,normal,shiny,sp[i]);
 }
+
 vec3 lights = em + amb * ambLight + dif * difLight + spec * specLight;
 
 return clamp(lights,0.0,1.0);

@@ -4,7 +4,7 @@
  *
  * Generate the geometry and indices required to make a box.
  */
-boxhdl::boxhdl(float width, float height, float depth)
+boxhdl::boxhdl(float width, float height, float depth, int shade_model)
 {
 	rigid.push_back(rigidhdl());
 
@@ -81,7 +81,18 @@ boxhdl::boxhdl(float width, float height, float depth)
 
 	bound = vec6f(-width/2.0, width/2.0, -height/2.0, height/2.0, -depth/2.0, depth/2.0);
 
-	material.insert(pair<string, materialhdl*>("default", new brickhdl()));
+    if (shade_model == nosh)
+        material.insert(pair<string, materialhdl*>("default", new whitehdl()));
+    if (shade_model == white)
+        material.insert(pair<string, materialhdl*>("default", new whitehdl()));
+    if (shade_model == gouraud)
+        material.insert(pair<string, materialhdl*>("default", new gouraudhdl()));
+    if (shade_model == phong)
+        material.insert(pair<string, materialhdl*>("default", new phonghdl()));
+    if (shade_model == brick)
+        material.insert(pair<string, materialhdl*>("default", new brickhdl()));
+    if (shade_model == texture)
+        material.insert(pair<string, materialhdl*>("default", new texturehdl()));
 }
 
 boxhdl::~boxhdl()
@@ -93,7 +104,7 @@ boxhdl::~boxhdl()
  *
  * Generate the geometry and indices required to make a sphere.
  */
-spherehdl::spherehdl(float radius, int levels, int slices)
+spherehdl::spherehdl(float radius, int levels, int slices, int shade_model)
 {
 	rigid.push_back(rigidhdl());
 
@@ -139,7 +150,18 @@ spherehdl::spherehdl(float radius, int levels, int slices)
 
 	bound = vec6f(-radius, radius, -radius, radius, -radius, radius);
 
-	material.insert(pair<string, materialhdl*>("default", new gouraudhdl()));
+    if (shade_model == nosh)
+        material.insert(pair<string, materialhdl*>("default", new whitehdl()));
+    if (shade_model == white)
+        material.insert(pair<string, materialhdl*>("default", new whitehdl()));
+    if (shade_model == gouraud)
+        material.insert(pair<string, materialhdl*>("default", new gouraudhdl()));
+    if (shade_model == phong)
+        material.insert(pair<string, materialhdl*>("default", new phonghdl()));
+    if (shade_model == brick)
+        material.insert(pair<string, materialhdl*>("default", new brickhdl()));
+    if (shade_model == texture)
+        material.insert(pair<string, materialhdl*>("default", new texturehdl()));
 }
 
 spherehdl::~spherehdl()
@@ -151,7 +173,7 @@ spherehdl::~spherehdl()
  *
  * Generate the geometry and indices required to make a cylinder.
  */
-cylinderhdl::cylinderhdl(float radius, float height, int slices)
+cylinderhdl::cylinderhdl(float radius, float height, int slices, int shade_model)
 {
 	rigid.push_back(rigidhdl());
 
@@ -200,7 +222,18 @@ cylinderhdl::cylinderhdl(float radius, float height, int slices)
 
 	bound = vec6f(-radius, radius, -height/2.0, height/2.0, -radius, radius);
 
-	material.insert(pair<string, materialhdl*>("default", new whitehdl()));
+    if (shade_model == nosh)
+        material.insert(pair<string, materialhdl*>("default", new whitehdl()));
+    if (shade_model == white)
+        material.insert(pair<string, materialhdl*>("default", new whitehdl()));
+    if (shade_model == gouraud)
+        material.insert(pair<string, materialhdl*>("default", new gouraudhdl()));
+    if (shade_model == phong)
+        material.insert(pair<string, materialhdl*>("default", new phonghdl()));
+    if (shade_model == brick)
+        material.insert(pair<string, materialhdl*>("default", new brickhdl()));
+    if (shade_model == texture)
+        material.insert(pair<string, materialhdl*>("default", new texturehdl()));
 }
 
 cylinderhdl::~cylinderhdl()
@@ -212,7 +245,7 @@ cylinderhdl::~cylinderhdl()
  *
  * Generate the geometry and indices required to make a pyramid.
  */
-pyramidhdl::pyramidhdl(float radius, float height, int slices)
+pyramidhdl::pyramidhdl(float radius, float height, int slices, int shade_model)
 {
 	rigid.push_back(rigidhdl());
 
@@ -248,7 +281,18 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices)
 
 	bound = vec6f(-radius, radius, -height/2.0, height/2.0, -radius, radius);
 
-	material.insert(pair<string, materialhdl*>("default", new whitehdl()));
+    if (shade_model == nosh)
+        material.insert(pair<string, materialhdl*>("default", new whitehdl()));
+    if (shade_model == white)
+        material.insert(pair<string, materialhdl*>("default", new whitehdl()));
+    if (shade_model == gouraud)
+        material.insert(pair<string, materialhdl*>("default", new gouraudhdl()));
+    if (shade_model == phong)
+        material.insert(pair<string, materialhdl*>("default", new phonghdl()));
+    if (shade_model == brick)
+        material.insert(pair<string, materialhdl*>("default", new brickhdl()));
+    if (shade_model == texture)
+        material.insert(pair<string, materialhdl*>("default", new texturehdl()));
 }
 
 pyramidhdl::~pyramidhdl()

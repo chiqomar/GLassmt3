@@ -362,8 +362,8 @@ brickhdl::brickhdl()
 		 * the class is created.
 		 */
         glEnable(GL_DEPTH_TEST);
-        vertex = load_shader_file("res/white.vx", GL_VERTEX_SHADER);
-        fragment = load_shader_file("res/white.ft", GL_FRAGMENT_SHADER);
+        vertex = load_shader_file("res/brick.vx", GL_VERTEX_SHADER);
+        fragment = load_shader_file("res/brick.ft", GL_FRAGMENT_SHADER);
         program = glCreateProgram();
         progmap.insert(pair<string, int>("brick", program));
         printProgramInfoLog(program);
@@ -426,7 +426,7 @@ void brickhdl::apply(const vector<lighthdl*> &lights)
     // Draw the triangles
     for (int j = 0; j < lights.size(); j++) {
         if (lights[j] != NULL)
-            lights[j]->apply("texture", program);
+            lights[j]->apply("brick", program);
     }
     int dirnum_loc = glGetUniformLocation(program, "dirNum");
     int spotnum_loc = glGetUniformLocation(program, "spotNum");
@@ -434,11 +434,6 @@ void brickhdl::apply(const vector<lighthdl*> &lights)
     glUniform1i(dirnum_loc, directionalhdl::count);
     glUniform1i(spotnum_loc, spothdl::count);
     glUniform1i(ptnum_loc, pointhdl::count);
-    
-    directionalhdl::count = -1;
-    spothdl::count = -1;
-    pointhdl::count = -1;
-
 }
 
 materialhdl *brickhdl::clone() const
@@ -462,8 +457,8 @@ texturehdl::texturehdl()
 		 * the class is created.
 		 */
         glEnable(GL_DEPTH_TEST);
-        vertex = load_shader_file("res/white.vx", GL_VERTEX_SHADER);
-        fragment = load_shader_file("res/white.ft", GL_FRAGMENT_SHADER);
+        vertex = load_shader_file("res/texture.vx", GL_VERTEX_SHADER);
+        fragment = load_shader_file("res/texture.ft", GL_FRAGMENT_SHADER);
         program = glCreateProgram();
         progmap.insert(pair<string, int>("texture", program));
         printProgramInfoLog(program);

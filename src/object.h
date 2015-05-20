@@ -53,7 +53,11 @@ struct objecthdl
         gouraud = 2,
         phong = 3,
         brick = 4,
-        texture = 5
+        texture = 5,
+        multitx = 6,
+        bumpmap = 7,
+        other = 8,
+        another = 9
     };
     
 	vec3f position;

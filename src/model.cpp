@@ -142,12 +142,12 @@ void modelhdl::load_obj(string filename)
 						else if (sscanf(part.c_str(), "%d", &v) == 1)
 							point.set(3,6, vertices[v-1]);
 
-						bound[0] = min(bound[0], point[0]);
-						bound[1] = max(bound[1], point[0]);
-						bound[2] = min(bound[2], point[1]);
-						bound[3] = max(bound[3], point[1]);
-						bound[4] = min(bound[4], point[2]);
-						bound[5] = max(bound[5], point[2]);
+						bound[0] = min(bound[0], point[3]);
+						bound[1] = max(bound[1], point[3]);
+						bound[2] = min(bound[2], point[4]);
+						bound[3] = max(bound[3], point[4]);
+						bound[4] = min(bound[4], point[5]);
+						bound[5] = max(bound[5], point[5]);
 
 						rigid.back().geometry.push_back(point);
 

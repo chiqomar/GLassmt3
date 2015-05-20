@@ -18,19 +18,17 @@ void rigidhdl::draw()
 {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
-    //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    //glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data() );
+      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     
-    //for vec8f
+    glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, &geometry.data()[0][3]);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(GLfloat)*8, &geometry.data()[0][6]);
+    glNormalPointer(GL_FLOAT, sizeof(GLfloat)*8, geometry.data());
     
-    glInterleavedArrays(GL_N3F_V3F, sizeof(GLfloat)*8, geometry.data());
-    
-    //glNormalPointer(GL_FLOAT, sizeof(GLfloat)*3, this->normals.data());
     glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
-    glDisableClientState(GL_VERTEX_ARRAY);
     
+    glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
-    //  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 objecthdl::objecthdl()

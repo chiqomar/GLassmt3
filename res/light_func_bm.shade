@@ -32,7 +32,9 @@ uniform direction di[3];
 uniform point pt[3];
 uniform spot sp[3];
 
-void direction_light(inout vec3 ambient, inout vec3 diffuse, inout vec3 specular, vec3 vertex, vec3 normal, float shininess, direction dire)
+uniform sampler2D normalmap;
+
+void direction_light(inout vec3 ambient, inout vec3 diffuse, inout vec3 specular, vec3 vertex, vec3 normal, vec3 map_norm, float shininess, direction dire)
 {
 	vec3 eye_direction = -vertex;
 	float eye_distance = length(eye_direction);
@@ -41,6 +43,7 @@ void direction_light(inout vec3 ambient, inout vec3 diffuse, inout vec3 specular
 	vec3 half_vector = normalize(dire.direction + eye_direction);
 
 	float normal_o_light_direction = max(0.0, dot(normal, dire.direction));
+	float mapnorm_o_light_direction = max(0.0, dot(map_norm, dire.direction));
 	float normal_o_half_vector = max(0.0, dot(normal, half_vector));
 
 	float power_factor = 0.0;
@@ -48,14 +51,14 @@ void direction_light(inout vec3 ambient, inout vec3 diffuse, inout vec3 specular
 		power_factor = pow(normal_o_half_vector, shininess);
 
 	ambient += dire.ambient;
-	diffuse += dire.diffuse*normal_o_light_direction;
+	diffuse += dire.diffuse*normal_o_light_direction*mapnorm_o_light_direction;
 	specular += dire.specular*power_factor;
 }
 
 
 
 
-void point_light(inout vec3 ambient, inout vec3 diffuse, inout vec3 specular, vec3 vertex, vec3 normal, float shininess, point pnt)
+void point_light(inout vec3 ambient, inout vec3 diffuse, inout vec3 specular, vec3 vertex, vec3 normal, vec3 map_norm, float shininess, point pnt)
 {
 	vec3 light_direction = pnt.position - vertex;
 	float light_distance = length(light_direction);
@@ -69,7 +72,8 @@ void point_light(inout vec3 ambient, inout vec3 diffuse, inout vec3 specular, ve
 
 	vec3 half_vector = normalize(light_direction + eye_direction);
 
-	float normal_o_light_direction = max(0.0f, dot(normal, light_direction));
+	float normal_o_light_direction = max(0.0, dot(normal, light_direction));
+	float mapnorm_o_position = max(0.0, dot(map_norm, pnt.position));
 	float normal_o_half_vector = max(0.0f, dot(normal, half_vector));
 
 	float power_factor = 0.0;
@@ -77,12 +81,13 @@ void point_light(inout vec3 ambient, inout vec3 diffuse, inout vec3 specular, ve
 		power_factor = pow(normal_o_half_vector, shininess);
 
 	ambient += pnt.ambient*att;
-	diffuse += pnt.diffuse*normal_o_light_direction*att;
-	specular += pnt.specular*power_factor*att;
+	diffuse += pnt.diffuse*normal_o_light_direction*att*mapnorm_o_position;
+
+	specular += pnt.specular*power_factor*att*mapnorm_o_position;
 }
 
 
-void spot_light(inout vec3 ambient, inout vec3 diffuse, inout vec3 specular, vec3 vertex, vec3 normal, float shininess, spot spt)
+void spot_light(inout vec3 ambient, inout vec3 diffuse, inout vec3 specular, vec3 vertex, vec3 normal, vec3 map_norm, float shininess, spot spt)
 {
 	vec3 light_direction = spt.position - vertex;
 	float light_distance = length(light_direction);
@@ -103,6 +108,7 @@ void spot_light(inout vec3 ambient, inout vec3 diffuse, inout vec3 specular, vec
 
 	vec3 half_vector = normalize(light_direction + normalize(-vertex));
 	float normal_o_light_direction = max(0.0f, dot(normal, light_direction));
+	//float mapnorm_o_position = max(0.0, dot(map_norm, spt.position));
 	float normal_o_half_vector = max(0.0f, dot(normal, half_vector));
 
 	float power_factor = 0.0;
@@ -119,16 +125,18 @@ vec3 shadeit(vec3 em, vec3 amb, vec3 dif, vec3 spec, float shiny, vec3 vertex, v
 	vec3 difLight = vec3(0.0, 0.0, 0.0);
 	vec3 specLight = vec3(0.0, 0.0, 0.0);
 
+	vec3 map_norm = normalize(texture2D(normalmap, gl_TexCoord[0].st).rgb * 2.0 - 1.0);
+
   for (int i = 0; i < dirNum + 1; i++) {
-    direction_light(ambLight,difLight,specLight,vertex,normal,shiny,di[i]);
+    direction_light(ambLight,difLight,specLight,vertex,normal,map_norm,shiny,di[i]);
 }
 
 for (int i = 0; i < ptNum + 1; i++) {
-  point_light(ambLight,difLight,specLight,vertex,normal,shiny,pt[i]);
+  point_light(ambLight,difLight,specLight,vertex,normal,map_norm,shiny,pt[i]);
 }
 
 for (int i = 0; i < spotNum + 1; i++) {
-  spot_light(ambLight,difLight,specLight,vertex,normal,shiny,sp[i]);
+  spot_light(ambLight,difLight,specLight,vertex,normal,map_norm,shiny,sp[i]);
 }
 
 vec3 lights = em + amb * ambLight + dif * difLight + spec * specLight;

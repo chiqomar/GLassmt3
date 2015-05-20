@@ -7,6 +7,8 @@
 #include "tinyfiledialogs.h"
 #include "light.h"
 
+#include "lodepng.h"
+
 static int fill_type = GL_FILL,culling = GL_FRONT_AND_BACK;
 
 int window_id;
@@ -48,6 +50,81 @@ manipulate::type manipulator;
 
 bool keys[256];
 
+
+void checkText()
+{    
+    // Load file and decode image.
+    std::vector<unsigned char> image;
+    unsigned wi, ht;
+    unsigned error = lodepng::decode(image, wi, ht, "res/img/rocks.png");
+    
+    // If there's an error, display it.
+    if(error != 0)
+    {
+        cout << "error " << error << ": " << lodepng_error_text(error) << endl;
+    }
+    
+    // Here the PNG is loaded in "image". All the rest of the code is SDL and OpenGL stuff.
+    
+    int screenw = width;
+    int screenh = height;
+    
+    
+    // The official code for "Setting Your Raster Position to a Pixel Location" (i.e. set up a camera for 2D screen)
+    
+    // Make some OpenGL properties better for 2D and enable alpha channel.
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glDisable(GL_ALPHA_TEST);
+    
+    if(glGetError() != GL_NO_ERROR)
+    {
+        cout << "Error initing GL" << endl;
+    }
+    
+    // Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
+    size_t u2 = 1; while(u2 < wi) u2 *= 2;
+    size_t v2 = 1; while(v2 < ht) v2 *= 2;
+    // Ratio for power of two version compared to actual version, to render the non power of two image with proper size.
+    double u3 = (double)wi / u2;
+    double v3 = (double)ht / v2;
+    
+    // Make power of two version of the image.
+    std::vector<unsigned char> image2(u2 * v2 * 4);
+    for(size_t y = 0; y < ht; y++)
+        for(size_t x = 0; x < wi; x++)
+            for(size_t c = 0; c < 4; c++)
+            {
+                image2[4 * u2 * y + 4 * x + c] = image[4 * wi * y + 4 * x + c];
+            }
+    
+    // Enable the texture for OpenGL.
+    glEnable(GL_TEXTURE_2D);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); //GL_NEAREST = no smoothing
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, u2, v2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image2[0]);
+    
+    bool done = false;
+    glColor4ub(255, 255, 255, 255);
+    
+    while(!done)
+    {
+        
+        // Draw the texture on a quad, using u3 and v3 to correct non power of two texture size.
+        glBegin(GL_QUADS);
+        glTexCoord2d( 0,  0); glVertex2f(    0,      0);
+        glTexCoord2d(u3,  0); glVertex2f(wi,      0);
+        glTexCoord2d(u3, v3); glVertex2f(wi, ht);
+        glTexCoord2d( 0, v3); glVertex2f(    0, ht);
+        glEnd();
+        
+        // Redraw and clear screen.
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+}
 
 void init()
 {
@@ -292,7 +369,7 @@ void motionfunc(int x, int y)
 				scene.objects[scene.active_object]->position = d*direction + position;
 			}
 			else if (manipulator == manipulate::rotate)
-				scene.objects[scene.active_object]->orientation += vec3f(-(float)deltay/100.0, (float)deltax/100.0, 0.0);
+				scene.objects[scene.active_object]->orientation += vec3f(-(float)deltay, (float)deltax, 0.0);
 			else if (manipulator == manipulate::scale)
 				scene.objects[scene.active_object]->scale += (float)deltay/100.0;
 
@@ -625,25 +702,17 @@ void canvas_menu(int num)
         scene.shade_model = scenehdl::brick;
     else if (num == 35)
         scene.shade_model = scenehdl::texture;
-
+    else if (num == 36)
+        scene.shade_model = scenehdl::multitx;
+    else if (num == 37)
+        scene.shade_model = scenehdl::bumpmap;
+        else if (num == 38);
+       // scene.shade_model = scenehdl::texture;
+        else if (num == 39);
+            // scene.shade_model = scenehdl::texture;
 	glutPostRedisplay();
 }
 
-static int choose_shader(int shade_model) {
-    if (scene.shade_model == scenehdl::nosh)
-        return scenehdl::nosh;
-    if (scene.shade_model == scenehdl::white)
-        return scenehdl::scenehdl::white;
-    if (scene.shade_model == scenehdl::gouraud)
-        return scenehdl::scenehdl::gouraud;
-    if (scene.shade_model == scenehdl::phong)
-        return scenehdl::scenehdl::phong;
-    if (scene.shade_model == scenehdl::brick)
-        return scenehdl::scenehdl::brick;
-    if (scene.shade_model == scenehdl::texture)
-        return scenehdl::texture;
-    return -1;
-}
 
 void object_menu(int num)
 {
@@ -882,6 +951,10 @@ void create_menu()
     glutAddMenuEntry(" Phong       ", 27);
     glutAddMenuEntry(" Brick       ", 34);
     glutAddMenuEntry(" Texture     ", 35);
+    glutAddMenuEntry(" MultiTex    ", 36);
+    glutAddMenuEntry(" BumpMap     ", 37);
+    glutAddMenuEntry(" ???????     ", 38);
+    glutAddMenuEntry(" Surprise!   ", 39);
 
 	int culling_id = glutCreateMenu(canvas_menu);
 	glutAddMenuEntry(" None        ", 28);

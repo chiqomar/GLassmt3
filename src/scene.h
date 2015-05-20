@@ -34,7 +34,11 @@ struct scenehdl
         gouraud = 2,
         phong = 3,
         brick = 4,
-        texture = 5
+        texture = 5,
+        multitx = 6,
+        bumpmap = 7,
+        other = 8,
+        another = 9
     } shade_model;
 
 	// Whether or not to render the lights or the cameras or both

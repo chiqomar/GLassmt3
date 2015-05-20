@@ -13,4 +13,5 @@ dependencies: /Users/oza/tester/assignment3/src/main.cpp \
   /Users/oza/tester/assignment3/src/primitive.h \
   /Users/oza/tester/assignment3/src/tinyfiledialogs.h \
   /Users/oza/tester/assignment3/src/light.h \
-  /Users/oza/tester/assignment3/src/core/color.h
+  /Users/oza/tester/assignment3/src/core/color.h \
+  /Users/oza/tester/assignment3/src/lodepng.h

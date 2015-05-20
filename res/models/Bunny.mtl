@@ -1,26 +1,14 @@
-<<<<<<< HEAD
-newmtl uniform Material__1
-=======
 newmtl phong Material__1
->>>>>>> 5a28a44aa4eed5b7638f637d20a7bae5fa36dd5e
 Ka 1.0 1.0 1.0
 Kd 1.0 0.753 0.796
 Ks 0.0 0.0 0.0
 Ns 0.0
-<<<<<<< HEAD
-newmtl uniform Material__2
-=======
 newmtl phong Material__2
->>>>>>> 5a28a44aa4eed5b7638f637d20a7bae5fa36dd5e
 Ka 1.0 1.0 1.0
 Kd 0.1647 0.1647 0.6471
 Ks 1.0 1.0 1.0
 Ns 10.0
-<<<<<<< HEAD
-newmtl uniform Material__3
-=======
 newmtl phong Material__3
->>>>>>> 5a28a44aa4eed5b7638f637d20a7bae5fa36dd5e
 Ka 1.0 1.0 1.0
 Kd 1.0 1.0 1.0
 Ks 0.0 0.0 0.0

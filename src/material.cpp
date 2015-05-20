@@ -23,6 +23,24 @@ GLuint texturehdl::fragment = 0;
 GLuint texturehdl::program = 0;
 GLuint texturehdl::texture = 0;
 
+GLuint multitxhdl::vertex = 0;
+GLuint multitxhdl::fragment = 0;
+GLuint multitxhdl::program = 0;
+GLuint multitxhdl::texture = 0;
+GLuint multitxhdl::text2 = 0;
+
+GLuint normmaphdl::vertex = 0;
+GLuint normmaphdl::fragment = 0;
+GLuint normmaphdl::program = 0;
+GLuint normmaphdl::texture = 0;
+GLuint normmaphdl::normalmap = 0;
+
+GLuint bumpmaphdl::vertex = 0;
+GLuint bumpmaphdl::fragment = 0;
+GLuint bumpmaphdl::program = 0;
+GLuint bumpmaphdl::texture = 0;
+GLuint bumpmaphdl::normalmap = 0;
+
 map<string,int> materialhdl::progmap;
 
 extern string working_directory;
@@ -493,6 +511,22 @@ texturehdl::texturehdl()
             cout << "program bad" << endl;
         if (pok == GL_TRUE)
             cout << "program good" << endl;
+        
+
+        unsigned width, height;
+        vector<unsigned char> image;
+        double u,v;
+        loadtexture(width, height, image, u, v);
+        
+        glGenTextures(1, &texture);
+        cout << "Image data:" << image.data()[0] << " " << image.data()[1] << endl;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
+        glGenerateMipmap(GL_TEXTURE_2D);
 	}
 }
 
@@ -501,10 +535,43 @@ texturehdl::~texturehdl()
 
 }
 
+void texturehdl::loadtexture(unsigned &width, unsigned &height, vector<unsigned char> &image, double &u, double &v)
+{
+    // Load file and decode image.
+    unsigned error = lodepng::decode(image, width, height, "res/img/rocks.png");
+    
+    // If there's an error, display it.
+    if(error != 0)
+    {
+        cout << "error " << error << ": " << lodepng_error_text(error) << endl;
+    }
+    
+    // Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
+    
+}
+
 void texturehdl::apply(const vector<lighthdl*> &lights)
 {
 	// TODO Assignment 3: Apply the shader program and pass it the necessary uniform values
     glUseProgram(program);
+    
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    GLint baseImageLoc = glGetUniformLocation(program, "texture");
+    glUniform1i(baseImageLoc, 0);
+    
+    // Draw the triangles
+    for (int j = 0; j < lights.size(); j++) {
+        if (lights[j] != NULL)
+            lights[j]->apply("texture", program);
+    }
+    int dirnum_loc = glGetUniformLocation(program, "dirNum");
+    int spotnum_loc = glGetUniformLocation(program, "spotNum");
+    int ptnum_loc = glGetUniformLocation(program, "ptNum");
+    glUniform1i(dirnum_loc, directionalhdl::count);
+    glUniform1i(spotnum_loc, spothdl::count);
+    glUniform1i(ptnum_loc, pointhdl::count);
+    
 
 }
 
@@ -514,4 +581,433 @@ materialhdl *texturehdl::clone() const
 	result->type = type;
 	result->shininess = shininess;
 	return result;
+}
+
+multitxhdl::multitxhdl()
+{
+    type = "multitx";
+    
+    shininess = 1.0;
+    
+    if (vertex == 0 && fragment == 0 && program == 0)
+    {
+        /* TODO Assignment 3: Load and link the shaders and load the texture Keep in mind that vertex, fragment,
+         * and program are static variables meaning they are *shared across all instances of
+         * this class. So you only have to initialize them once when the first instance of
+         * the class is created.
+         */
+        glEnable(GL_DEPTH_TEST);
+        vertex = load_shader_file("res/multitx.vx", GL_VERTEX_SHADER);
+        fragment = load_shader_file("res/multitx.ft", GL_FRAGMENT_SHADER);
+        program = glCreateProgram();
+        progmap.insert(pair<string, int>("multitx", program));
+        printProgramInfoLog(program);
+        glAttachShader(program, vertex);
+        glAttachShader(program, fragment);
+        GLint pok = 0;
+        glGetProgramiv(program, GL_LINK_STATUS, &pok);
+        if (pok == GL_FALSE)
+            cout << "program bad" << endl;
+        if (pok == GL_TRUE)
+            cout << "program good" << endl;
+        glAttachShader(program, vertex);
+        glAttachShader(program, fragment);
+        GLint vok = 0;
+        GLint fok = 0;
+        glGetShaderiv(vertex, GL_COMPILE_STATUS, &vok);
+        glGetShaderiv(fragment, GL_COMPILE_STATUS, &fok);
+        if (vok == GL_FALSE)
+            cout << "Something in the vertex shader fed up";
+        if (vok == GL_TRUE)
+            cout << "multitx V shader is good";
+        if (fok == GL_FALSE)
+            cout << "Something in the fragment shader fed up";
+        if (vok == GL_TRUE)
+            cout << "F shader is good";
+        printShaderInfoLog(vertex);
+        printShaderInfoLog(fragment);
+        glLinkProgram(program);
+        pok = 0;
+        glGetProgramiv(program, GL_LINK_STATUS, &pok);
+        if (pok == GL_FALSE)
+            cout << "program bad" << endl;
+        if (pok == GL_TRUE)
+            cout << "program good" << endl;
+        
+        
+        unsigned width, height ,w2, h2;
+        vector<unsigned char> image,other;
+        loadtexture(width, height, image, "res/img/rocks.png");
+        loadtexture(w2, h2, other, "res/img/multi.png");
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
+        glGenerateMipmap(GL_TEXTURE_2D);
+        
+        glGenTextures(1, &text2);
+        glBindTexture(GL_TEXTURE_2D, text2);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w2, h2, 0, GL_RGBA, GL_UNSIGNED_BYTE, other.data());
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+}
+
+multitxhdl::~multitxhdl()
+{
+    
+}
+
+void multitxhdl::loadtexture(unsigned &width, unsigned &height, vector<unsigned char> &image, string filename)
+{
+    // Load file and decode image.
+    unsigned error = lodepng::decode(image, width, height, filename.c_str());
+    
+    // If there's an error, display it.
+    if(error != 0)
+    {
+        cout << "error " << error << ": " << lodepng_error_text(error) << endl;
+    }
+    
+    // Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
+    
+}
+
+
+
+void multitxhdl::apply(const vector<lighthdl*> &lights)
+{
+    // TODO Assignment 3: Apply the shader program and pass it the necessary uniform values
+    glUseProgram(program);
+    
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    GLint baseImageLoc = glGetUniformLocation(program, "texture");
+    glUniform1i(baseImageLoc, 0);
+    
+    glActiveTexture(GL_TEXTURE1 + 0);
+    glBindTexture(GL_TEXTURE_2D, text2);
+    GLint secondImgLoc = glGetUniformLocation(program, "othertx");
+    glUniform1i(secondImgLoc, 1);
+    
+    // Draw the triangles
+    for (int j = 0; j < lights.size(); j++) {
+        if (lights[j] != NULL)
+            lights[j]->apply("texture", program);
+    }
+    int dirnum_loc = glGetUniformLocation(program, "dirNum");
+    int spotnum_loc = glGetUniformLocation(program, "spotNum");
+    int ptnum_loc = glGetUniformLocation(program, "ptNum");
+    glUniform1i(dirnum_loc, directionalhdl::count);
+    glUniform1i(spotnum_loc, spothdl::count);
+    glUniform1i(ptnum_loc, pointhdl::count);
+    
+    
+}
+
+materialhdl *multitxhdl::clone() const
+{
+    texturehdl *result = new texturehdl();
+    result->type = type;
+    result->shininess = shininess;
+    return result;
+}
+
+//void normmaphdl::computeTangentBasis(
+//                                   // inputs
+//                                   vec3f & vertices,
+//                                   vec2f & uvs,
+//                                   vec3f & normals,
+//                                   // outputs
+//                                   vec3f & tangents,
+//                                   vec3f & bitangents
+//                                   )
+//{
+//    for ( int i=0; i<vertices.size(); i+=3){
+//        
+//        // Shortcuts for vertices
+//        vec3f & v0 = vertices[i+0];
+//        vec3f & v1 = vertices[i+1];
+//        vec3f & v2 = vertices[i+2];
+//        
+//        // Shortcuts for UVs
+//        vec2f & uv0 = uvs[i+0];
+//        vec2f & uv1 = uvs[i+1];
+//        vec2f & uv2 = uvs[i+2];
+//        
+//        // Edges of the triangle : postion delta
+//        glm::vec3 deltaPos1 = vertices[i+1] - vertices[i+0];
+//        glm::vec3 deltaPos2 = vertices[i+2] - vertices[i+0];
+//        
+//        // UV delta
+//        glm::vec2 deltaUV1 = uv1-uv0;
+//        glm::vec2 deltaUV2 = uv2-uv0;
+//}
+
+normmaphdl::normmaphdl()
+{
+    type = "normmap";
+    
+    shininess = 1.0;
+    
+    if (vertex == 0 && fragment == 0 && program == 0)
+    {
+        /* TODO Assignment 3: Load and link the shaders and load the texture Keep in mind that vertex, fragment,
+         * and program are static variables meaning they are *shared across all instances of
+         * this class. So you only have to initialize them once when the first instance of
+         * the class is created.
+         */
+        glEnable(GL_DEPTH_TEST);
+        vertex = load_shader_file("res/normmap.vx", GL_VERTEX_SHADER);
+        fragment = load_shader_file("res/normmap.ft", GL_FRAGMENT_SHADER);
+        program = glCreateProgram();
+        progmap.insert(pair<string, int>("normmap", program));
+        printProgramInfoLog(program);
+        glAttachShader(program, vertex);
+        glAttachShader(program, fragment);
+        GLint pok = 0;
+        glGetProgramiv(program, GL_LINK_STATUS, &pok);
+        if (pok == GL_FALSE)
+            cout << "program bad" << endl;
+        if (pok == GL_TRUE)
+            cout << "program good" << endl;
+        glAttachShader(program, vertex);
+        glAttachShader(program, fragment);
+        GLint vok = 0;
+        GLint fok = 0;
+        glGetShaderiv(vertex, GL_COMPILE_STATUS, &vok);
+        glGetShaderiv(fragment, GL_COMPILE_STATUS, &fok);
+        if (vok == GL_FALSE)
+            cout << "Something in the vertex shader fed up";
+        if (vok == GL_TRUE)
+            cout << "normmap V shader is good";
+        if (fok == GL_FALSE)
+            cout << "Something in the fragment shader fed up";
+        if (vok == GL_TRUE)
+            cout << "F shader is good";
+        printShaderInfoLog(vertex);
+        printShaderInfoLog(fragment);
+        glLinkProgram(program);
+        pok = 0;
+        glGetProgramiv(program, GL_LINK_STATUS, &pok);
+        if (pok == GL_FALSE)
+            cout << "program bad" << endl;
+        if (pok == GL_TRUE)
+            cout << "program good" << endl;
+        
+        
+        unsigned width, height ,w2, h2;
+        vector<unsigned char> image,other;
+        loadtexture(width, height, image, "res/img/rocks.png");
+        loadtexture(w2, h2, other, "res/img/multi.png");
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+    }
+}
+
+normmaphdl::~normmaphdl()
+{
+    
+}
+
+void normmaphdl::loadtexture(unsigned &width, unsigned &height, vector<unsigned char> &image, string filename)
+{
+    // Load file and decode image.
+    unsigned error = lodepng::decode(image, width, height, filename.c_str());
+    
+    // If there's an error, display it.
+    if(error != 0)
+    {
+        cout << "error " << error << ": " << lodepng_error_text(error) << endl;
+    }
+    
+    // Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
+    
+}
+
+void normmaphdl::apply(const vector<lighthdl*> &lights)
+{
+    // TODO Assignment 3: Apply the shader program and pass it the necessary uniform values
+    glUseProgram(program);
+    
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    GLint baseImageLoc = glGetUniformLocation(program, "texture");
+    glUniform1i(baseImageLoc, 0);
+    
+    glActiveTexture(GL_TEXTURE1 + 0);
+    glBindTexture(GL_TEXTURE_2D, normalmap);
+    GLint secondImgLoc = glGetUniformLocation(program, "othertx");
+    glUniform1i(secondImgLoc, 1);
+    
+    // Draw the triangles
+    for (int j = 0; j < lights.size(); j++) {
+        if (lights[j] != NULL)
+            lights[j]->apply("texture", program);
+    }
+    int dirnum_loc = glGetUniformLocation(program, "dirNum");
+    int spotnum_loc = glGetUniformLocation(program, "spotNum");
+    int ptnum_loc = glGetUniformLocation(program, "ptNum");
+    glUniform1i(dirnum_loc, directionalhdl::count);
+    glUniform1i(spotnum_loc, spothdl::count);
+    glUniform1i(ptnum_loc, pointhdl::count);
+    
+    
+}
+
+materialhdl *normmaphdl::clone() const
+{
+    texturehdl *result = new texturehdl();
+    result->type = type;
+    result->shininess = shininess;
+    return result;
+}
+
+bumpmaphdl::bumpmaphdl()
+{
+    type = "bumpmap";
+    
+    shininess = 1.0;
+    
+    if (vertex == 0 && fragment == 0 && program == 0)
+    {
+        /* TODO Assignment 3: Load and link the shaders and load the texture Keep in mind that vertex, fragment,
+         * and program are static variables meaning they are *shared across all instances of
+         * this class. So you only have to initialize them once when the first instance of
+         * the class is created.
+         */
+        glEnable(GL_DEPTH_TEST);
+        vertex = load_shader_file("res/bumpmap.vx", GL_VERTEX_SHADER);
+        fragment = load_shader_file("res/bumpmap.ft", GL_FRAGMENT_SHADER);
+        program = glCreateProgram();
+        progmap.insert(pair<string, int>("bumpmap", program));
+        printProgramInfoLog(program);
+        glAttachShader(program, vertex);
+        glAttachShader(program, fragment);
+        GLint pok = 0;
+        glGetProgramiv(program, GL_LINK_STATUS, &pok);
+        if (pok == GL_FALSE)
+            cout << "program bad" << endl;
+        if (pok == GL_TRUE)
+            cout << "program good" << endl;
+        glAttachShader(program, vertex);
+        glAttachShader(program, fragment);
+        GLint vok = 0;
+        GLint fok = 0;
+        glGetShaderiv(vertex, GL_COMPILE_STATUS, &vok);
+        glGetShaderiv(fragment, GL_COMPILE_STATUS, &fok);
+        if (vok == GL_FALSE)
+            cout << "Something in the vertex shader fed up";
+        if (vok == GL_TRUE)
+            cout << "normmap V shader is good";
+        if (fok == GL_FALSE)
+            cout << "Something in the fragment shader fed up";
+        if (vok == GL_TRUE)
+            cout << "F shader is good";
+        printShaderInfoLog(vertex);
+        printShaderInfoLog(fragment);
+        glLinkProgram(program);
+        pok = 0;
+        glGetProgramiv(program, GL_LINK_STATUS, &pok);
+        if (pok == GL_FALSE)
+            cout << "program bad" << endl;
+        if (pok == GL_TRUE)
+            cout << "program good" << endl;
+        
+        
+        unsigned width, height ,w2, h2;
+        vector<unsigned char> image,other;
+        loadtexture(width, height, image, "res/img/rocks.png");
+        loadtexture(w2, h2, other, "res/img/rocks_nm.png");
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data());
+        glGenerateMipmap(GL_TEXTURE_2D);
+        
+        glGenTextures(1, &normalmap);
+        glBindTexture(GL_TEXTURE_2D, normalmap);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w2, h2, 0, GL_RGBA, GL_UNSIGNED_BYTE, other.data());
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+}
+
+bumpmaphdl::~bumpmaphdl()
+{
+    
+}
+
+void bumpmaphdl::loadtexture(unsigned &width, unsigned &height, vector<unsigned char> &image, string filename)
+{
+    // Load file and decode image.
+    unsigned error = lodepng::decode(image, width, height, filename.c_str());
+    
+    // If there's an error, display it.
+    if(error != 0)
+    {
+        cout << "error " << error << ": " << lodepng_error_text(error) << endl;
+    }
+    
+    // Texture size must be power of two for the primitive OpenGL version this is written for. Find next power of two.
+    
+}
+
+void bumpmaphdl::apply(const vector<lighthdl*> &lights)
+{
+    // TODO Assignment 3: Apply the shader program and pass it the necessary uniform values
+    glUseProgram(program);
+    
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glEnable(GL_TEXTURE_2D);
+    GLint baseImageLoc = glGetUniformLocation(program, "texture");
+    glUniform1i(baseImageLoc, 0);
+    
+    glActiveTexture(GL_TEXTURE1 + 0);
+    glBindTexture(GL_TEXTURE_2D, normalmap);
+    glEnable(GL_TEXTURE_2D);
+    GLint secondImgLoc = glGetUniformLocation(program, "normalmap");
+    glUniform1i(secondImgLoc, 1);
+    
+    // Draw the triangles
+    for (int j = 0; j < lights.size(); j++) {
+        if (lights[j] != NULL)
+            lights[j]->apply("texture", program);
+    }
+    int dirnum_loc = glGetUniformLocation(program, "dirNum");
+    int spotnum_loc = glGetUniformLocation(program, "spotNum");
+    int ptnum_loc = glGetUniformLocation(program, "ptNum");
+    glUniform1i(dirnum_loc, directionalhdl::count);
+    glUniform1i(spotnum_loc, spothdl::count);
+    glUniform1i(ptnum_loc, pointhdl::count);
+    
+    
+}
+
+materialhdl *bumpmaphdl::clone() const
+{
+    texturehdl *result = new texturehdl();
+    result->type = type;
+    result->shininess = shininess;
+    return result;
 }

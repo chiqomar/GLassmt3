@@ -1,0 +1,9 @@
+#version 120
+
+uniform vec4 white_color;
+
+void main()
+{
+
+	gl_FragColor = white_color;
+}

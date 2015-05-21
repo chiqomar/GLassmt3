@@ -214,6 +214,12 @@ void modelhdl::load_mtl(string filename)
 					material[current_material] = new brickhdl();
 				else if (type == "texture")
 					material[current_material] = new texturehdl();
+                else if (type == "multi")
+                    material[current_material] = new multitxhdl();
+                else if (type == "toon")
+                    material[current_material] = new toonhdl();
+                else if (type == "bump")
+                    material[current_material] = new bumpmaphdl();
 			}
 			else if (command == "Ke" && type == "gouraud")
 				iss >> ((gouraudhdl*)material[current_material])->emission[0] >> ((gouraudhdl*)material[current_material])->emission[1] >> ((gouraudhdl*)material[current_material])->emission[2];

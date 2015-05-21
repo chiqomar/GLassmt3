@@ -148,8 +148,8 @@ void pmotionfunc(int x, int y)
 
 		if (scene.active_camera_valid())
 		{
-			scene.cameras[scene.active_camera]->orientation[1] -= (float)deltax/500.0;
-			scene.cameras[scene.active_camera]->orientation[0] -= (float)deltay/500.0;
+			scene.cameras[scene.active_camera]->orientation[1] -= (float)deltax/50.0;
+			scene.cameras[scene.active_camera]->orientation[0] -= (float)deltay/50.0;
 		}
 
 		glutPostRedisplay();
@@ -399,32 +399,32 @@ void idlefunc()
 	{
 		if (keys['w'])
 		{
-			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation*(3.14f/180));
 			change = true;
 		}
 		if (keys['s'])
 		{
-			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation*(3.14f/180));
 			change = true;
 		}
 		if (keys['a'])
 		{
-			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation*(3.14f/180));
 			change = true;
 		}
 		if (keys['d'])
 		{
-			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation*(3.14f/180));
 			change = true;
 		}
 		if (keys['q'])
 		{
-			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation*(3.14f/180));
 			change = true;
 		}
 		if (keys['e'])
 		{
-			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation*(3.14f/180));
 			change = true;
 		}
 	}
@@ -907,6 +907,7 @@ void create_menu()
     glutAddMenuEntry(" Translate   ", 1);
     glutAddMenuEntry(" Rotate      ", 2);
     glutAddMenuEntry(" Scale       ", 3);
+    glutAddSubMenu  (" Shade       ", shading_id);
     glutAddMenuEntry(" Delete      ", 0);
 
     light_menu_id = glutCreateMenu(object_menu);

@@ -13,6 +13,8 @@ varying vec3 eye_space_vertex;
 void main()
 {
     vec3 norm = normalize(eye_space_normal);
-
-    gl_FragColor = vec4(shadeit(emission,ambient,diffuse,specular,shininess,eye_space_vertex,norm),1.0);
+    if (dot(norm, -normalize(eye_space_vertex)) < 0.2)
+    	gl_FragColor = vec4(1.0,1.0,1.0,1.0);
+   else
+   		gl_FragColor = vec4(shadeit(emission,ambient,diffuse,specular,shininess,eye_space_vertex,norm),1.0);
 }

@@ -95,9 +95,11 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
     
     for (int i = 0; i < rigid.size(); i++)
     {
-        if (material[rigid[i].material] == NULL)
-            material.insert(pair<string, materialhdl*>("default", new phonghdl()));
-        material["default"]->apply(lights);
+        if  (rigid[i].material == "")
+            rigid[i].material = "default";
+        if (material.find(rigid[i].material) == material.end() || material[rigid[i].material] == NULL)
+                material.insert(pair<string, materialhdl*>(rigid[i].material, new whitehdl()));
+        material[rigid[i].material]->apply(lights);
         rigid[i].draw();
     }
     

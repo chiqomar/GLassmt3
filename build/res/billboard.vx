@@ -7,14 +7,11 @@ varying vec3 eye_space_vertex;
 void main()
 {
 
-gl_Position = gl_ProjectionMatrix 
-               * (gl_ModelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0) 
-               + vec4(gl_Vertex.x, gl_Vertex.y, 0.0, 0.0));
- 
-            texcoord = 
-               vec2(gl_Vertex.x + 0.5, gl_Vertex.y + 0.5);
-    eye_space_normal = gl_NormalMatrix * gl_Normal;
-    vec4 vertex = gl_ModelViewMatrix * gl_Vertex;
-    eye_space_vertex = vertex.xyz;
 
-  }
+	eye_space_vertex = (gl_ModelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0) 
+		+ vec4(gl_Vertex.x, gl_Vertex.y, 0.0, 0.0)).xyz;
+	gl_Position = gl_ProjectionMatrix * vec4(eye_space_vertex,1.0);
+	texcoord = vec2(gl_Vertex.x + 0.5 , gl_Vertex.y + 0.5);
+	eye_space_normal = -normalize(eye_space_vertex);
+
+}

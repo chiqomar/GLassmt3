@@ -172,4 +172,44 @@ struct bumpmaphdl : materialhdl
     materialhdl *clone() const;
 };
 
+struct toonhdl : materialhdl
+{
+    toonhdl();
+    ~toonhdl();
+    
+    vec3f emission;
+    vec3f ambient;
+    vec3f diffuse;
+    vec3f specular;
+    float shininess;
+    
+    static GLuint vertex;
+    static GLuint fragment;
+    static GLuint program;
+    
+    void apply(const vector<lighthdl*> &lights);
+    materialhdl *clone() const;
+};
+
+struct billboardhdl : materialhdl
+{
+    billboardhdl();
+    ~billboardhdl();
+    
+    vec3f emission;
+    vec3f ambient;
+    vec3f diffuse;
+    vec3f specular;
+    float shininess;
+    
+    static GLuint vertex;
+    static GLuint fragment;
+    static GLuint program;
+    
+    static GLuint texture;
+    
+    void loadtexture(unsigned &width, unsigned &height, vector<unsigned char> &image, string file);
+    void apply(const vector<lighthdl*> &lights);
+    materialhdl *clone() const;
+};
 #endif

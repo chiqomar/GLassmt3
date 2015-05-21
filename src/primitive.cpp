@@ -97,10 +97,10 @@ boxhdl::boxhdl(float width, float height, float depth, int shade_model)
         material.insert(pair<string, materialhdl*>("default", new multitxhdl()));
     if (shade_model == bumpmap)
         material.insert(pair<string, materialhdl*>("default", new bumpmaphdl()));
-//    if (shade_model == multitx)
-//        material.insert(pair<string, materialhdl*>("default", new multitxhdl()));
-//    if (shade_model == bumpmap)
-//        material.insert(pair<string, materialhdl*>("default", new multitxhdl()));
+    if (shade_model == toon)
+        material.insert(pair<string, materialhdl*>("default", new toonhdl()));
+    if (shade_model == billboard)
+        material.insert(pair<string, materialhdl*>("default", new billboardhdl()));
     
 }
 
@@ -164,10 +164,10 @@ spherehdl::spherehdl(float radius, int levels, int slices, int shade_model)
         material.insert(pair<string, materialhdl*>("default", new multitxhdl()));
     if (shade_model == bumpmap)
         material.insert(pair<string, materialhdl*>("default", new bumpmaphdl()));
-    //    if (shade_model == multitx)
-    //        material.insert(pair<string, materialhdl*>("default", new multitxhdl()));
-    //    if (shade_model == bumpmap)
-    //        material.insert(pair<string, materialhdl*>("default", new multitxhdl()));
+    if (shade_model == toon)
+        material.insert(pair<string, materialhdl*>("default", new toonhdl()));
+    if (shade_model == billboard)
+        material.insert(pair<string, materialhdl*>("default", new billboardhdl()));
 }
 
 spherehdl::~spherehdl()
@@ -186,16 +186,16 @@ cylinderhdl::cylinderhdl(float radius, float height, int slices, int shade_model
 	rigid[0].material = "default";
 
 	rigid[0].geometry.push_back(vec8f( 0.0, -1.0, 0.0,0.0, -height/2.0, 0.0, 0.0, 0.0));
-	for (int i = 0; i <= slices; i++)
+	for (int i = 0; i < slices; i++)
 		rigid[0].geometry.push_back(vec8f(0.0, -1.0, 0.0, radius*cos(2*m_pi*(float)i/(float)slices),-height/2.0,radius*sin(2*m_pi*(float)i/(float)slices),radius*sin(2*m_pi*(float)i/(float)slices), radius*cos(2*m_pi*(float)i/(float)slices)));
     
-	for (int i = 0; i < slices; i++)
-		rigid[0].geometry.push_back(vec8f(cos(2*m_pi*(float)i/(float)slices),0.0,sin(2*m_pi*(float)i/(float)slices),radius*cos(2*m_pi*(float)i/(float)slices),-height/2.0,radius*sin(2*m_pi*(float)i/(float)slices), (float)i/(float)slices, 0.0));
+	for (int i = 0; i <= slices; i++)
+		rigid[0].geometry.push_back(vec8f(cos(2*m_pi*(float)i/(float)slices),0.0,sin(2*m_pi*(float)i/(float)slices),radius*cos(2*m_pi*(float)i/(float)slices),-height/2.0,radius*sin(2*m_pi*(float)i/(float)slices), (float)i/(float)slices, 1.0));
     
 
-	for (int i = 0; i < slices; i++)
+	for (int i = 0; i <= slices; i++)
 		rigid[0].geometry.push_back(vec8f(cos(2*m_pi*(float)i/(float)slices),0.0,sin(2*m_pi*(float)i/(float)slices),radius*cos(2*m_pi*(float)i/(float)slices),height/2.0,radius*sin(2*m_pi*(float)i/(float)slices),
-								  (float)i/(float)slices, 1.0));
+								  (float)i/(float)slices, 0.0));
     
     
 
@@ -212,55 +212,22 @@ cylinderhdl::cylinderhdl(float radius, float height, int slices, int shade_model
 		rigid[0].indices.push_back(0);
 	}
 
-	for (int i = 0; i < slices; i++)
+	for (int i = 0; i <= slices; i++)
 	{
-		rigid[0].indices.push_back(1 + slices + i);
-		rigid[0].indices.push_back(1 + slices + (i+1)%slices);
-		rigid[0].indices.push_back(1 + 2*slices + i);
+		rigid[0].indices.push_back((slices+1) + i);
+		rigid[0].indices.push_back((slices+1) + (i+1));
+		rigid[0].indices.push_back(2*(slices+1) + i);
 
-		rigid[0].indices.push_back(1 + 2*slices + i);
-		rigid[0].indices.push_back(1 + slices + (i+1)%slices);
-		rigid[0].indices.push_back(1 + 2*slices + (i+1)%slices);
+		rigid[0].indices.push_back(2*(slices+1) + i);
+		rigid[0].indices.push_back((slices+1) + (i+1));
+		rigid[0].indices.push_back(2*(slices+1) + (i+1));
 	}
-    
-//    rigid[0].indices.push_back(1 + slices + 0);
-//    rigid[0].indices.push_back(1 + slices + (i+1)%slices);
-//    rigid[0].indices.push_back(1 + 2*slices + i);
-//    
-//    rigid[0].indices.push_back(1 + 2*slices + i);
-//    rigid[0].indices.push_back(1 + slices + (i+1)%slices);
-//    rigid[0].indices.push_back(1 + 2*slices + (i+1)%slices);
-    
-    
-   // rigid[0].indices.push_back(1 + slices + slices-2);
-   // rigid[0].indices.push_back(1 + slices + (slices-1+1)%slices);
-   // rigid[0].indices.push_back(1 + 2*slices + 0);
-    
-    rigid[0].indices.push_back(21);
-    rigid[0].indices.push_back(41);
-    rigid[0].indices.push_back(22);
-    
-   // rigid[0].indices.push_back(1 + 2*slices + slices-1);
-   // rigid[0].indices.push_back(1 + slices + (1)%slices);
-   // rigid[0].indices.push_back(1 + 2*slices + (0+1)%slices);
-    
-    
-    
-   //     rigid[0].indices.push_back(1 + slices + slices-1);
-    //    rigid[0].indices.push_back(1 + slices + (slices-1+1)%slices);
-      //  rigid[0].indices.push_back(1 + slices + 0);
-   
-      //  rigid[0].indices.push_back(1 + 2*slices + 1);
-      //  rigid[0].indices.push_back(1 + slices + (slices-1+1)%slices);
-      //  rigid[0].indices.push_back(1 + 2*slices + (slices-1+1)%slices);
-    
-    
 
 	for (int i = 0; i < slices; i++)
 	{
-		rigid[0].indices.push_back(1 + 3*slices + i);
-		rigid[0].indices.push_back(1 + 3*slices + (i+1)%slices);
-		rigid[0].indices.push_back(1 + 4*slices);
+		rigid[0].indices.push_back(3*(slices+1) + i);
+		rigid[0].indices.push_back(3*(slices+1) + (i+1)%slices);
+		rigid[0].indices.push_back(4*(slices + 1) - 1);
 	}
 
 	bound = vec6f(-radius, radius, -height/2.0, height/2.0, -radius, radius);
@@ -281,10 +248,10 @@ cylinderhdl::cylinderhdl(float radius, float height, int slices, int shade_model
         material.insert(pair<string, materialhdl*>("default", new multitxhdl()));
     if (shade_model == bumpmap)
         material.insert(pair<string, materialhdl*>("default", new bumpmaphdl()));
-    //    if (shade_model == multitx)
-    //        material.insert(pair<string, materialhdl*>("default", new multitxhdl()));
-    //    if (shade_model == bumpmap)
-    //        material.insert(pair<string, materialhdl*>("default", new multitxhdl()));
+    if (shade_model == toon)
+        material.insert(pair<string, materialhdl*>("default", new toonhdl()));
+    if (shade_model == billboard)
+        material.insert(pair<string, materialhdl*>("default", new billboardhdl()));
 }
 
 cylinderhdl::~cylinderhdl()
@@ -307,27 +274,48 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices, int shade_model)
 
 	rigid[0].geometry.push_back(vec8f( 0.0, -1.0, 0.0,0.0, -height/2.0, 0.0, 0.0, 0.0));
 	for (int i = 0; i < slices; i++)
-		rigid[0].geometry.push_back(vec8f(0.0, -1.0, 0.0,radius*cos(2*m_pi*(float)i/(float)slices),-height/2.0,radius*sin(2*m_pi*(float)i/(float)slices),radius*sin(2*m_pi*(float)i/(float)slices), radius*cos(2*m_pi*(float)i/(float)slices)));
+		rigid[0].geometry.push_back(vec8f(0.0, -1.0, 0.0,
+            radius*cos(2*m_pi*(float)i/(float)slices),
+            -height/2.0,
+            radius*sin(2*m_pi*(float)i/(float)slices),
+            radius*sin(2*m_pi*(float)i/(float)slices),
+            radius*cos(2*m_pi*(float)i/(float)slices)));
+
+	for (int i = 0; i <= slices; i++)
+		rigid[0].geometry.push_back(vec8f(
+            nlength*cos(2*m_pi*(float)i/(float)slices),
+            nheight,
+            nlength*sin(2*m_pi*(float)i/(float)slices),
+            radius*cos(2*m_pi*(float)i/(float)slices),
+            -height/2.0,
+            radius*sin(2*m_pi*(float)i/(float)slices),
+            3*(float)i/(float)slices, 1.0));
 
 	for (int i = 0; i < slices; i++)
-		rigid[0].geometry.push_back(vec8f(nlength*cos(2*m_pi*(float)i/(float)slices),nheight,nlength*sin(2*m_pi*(float)i/(float)slices),radius*cos(2*m_pi*(float)i/(float)slices),-height/2.0,radius*sin(2*m_pi*(float)i/(float)slices),(float)(i*2)/(float)slices*2, (float)((i*2)+1)/(float)slices*2));
-
-	for (int i = 0; i < slices; i++)
-		rigid[0].geometry.push_back(vec8f(nlength*cos(2*m_pi*((float)i + 0.5)/(float)slices),nheight,nlength*sin(2*m_pi*((float)i + 0.5)/(float)slices), 0.0, height/2.0, 0.0, radius*sin(2*m_pi*(float)i/(float)slices), (float)((i*2)+1)/(float)slices*2, (float)((i*2)+1)/(float)slices*2));
+		rigid[0].geometry.push_back(
+            vec8f(
+            nlength*cos(2*m_pi*((float)i + 0.5)/(float)slices),
+            nheight,
+            nlength*sin(2*m_pi*((float)i + 0.5)/(float)slices),
+            0.0,
+            height/2.0,
+            0.0,
+            3*((float)i + 0.5)/(float)slices,
+            0.0));
 	//rigid[0].geometry.push_back(vec8f( 0.0, 1.0, 0.0,0.0, height/2.0, 0.0, 0.0, 0.0));
 
 	for (int i = 0; i < slices; i++)
 	{
-		rigid[0].indices.push_back(1 + (i+1));
+		rigid[0].indices.push_back(1 + (i+1)%slices);
 		rigid[0].indices.push_back(1 + i);
 		rigid[0].indices.push_back(0);
 	}
 
 	for (int i = 0; i < slices; i++)
 	{
-		rigid[0].indices.push_back(1 + slices + i);
-		rigid[0].indices.push_back(1 + slices + (i+1));
-		rigid[0].indices.push_back(1 + 2*slices + i);
+		rigid[0].indices.push_back(slices+1 + i);
+		rigid[0].indices.push_back(slices+1 + (i+1));
+		rigid[0].indices.push_back(2*(slices+1) + i);
 	}
 
 	bound = vec6f(-radius, radius, -height/2.0, height/2.0, -radius, radius);
@@ -348,10 +336,10 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices, int shade_model)
         material.insert(pair<string, materialhdl*>("default", new multitxhdl()));
     if (shade_model == bumpmap)
         material.insert(pair<string, materialhdl*>("default", new bumpmaphdl()));
-    //    if (shade_model == multitx)
-    //        material.insert(pair<string, materialhdl*>("default", new multitxhdl()));
-    //    if (shade_model == bumpmap)
-    //        material.insert(pair<string, materialhdl*>("default", new multitxhdl()));
+    if (shade_model == toon)
+        material.insert(pair<string, materialhdl*>("default", new toonhdl()));
+    if (shade_model == billboard)
+        material.insert(pair<string, materialhdl*>("default", new billboardhdl()));
 }
 
 pyramidhdl::~pyramidhdl()

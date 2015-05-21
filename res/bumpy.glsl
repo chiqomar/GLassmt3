@@ -11,7 +11,7 @@ void main()
     eye_space_normal = gl_NormalMatrix * gl_Normal;
     vec4 vertex = gl_ModelViewMatrix * gl_Vertex;
     eye_space_vertex = vertex.xyz;
-    texcoord = gl_MultiTexCoord0.xy;
+    texcoord = gl_MultiTexCoord0.xy * uv_tiling;;
     gl_Position = gl_ProjectionMatrix * vertex;
 
   }

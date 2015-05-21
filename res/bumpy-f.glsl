@@ -1,7 +1,6 @@
 #version 120
-#include "lightsBUMP.shd"
-
-
+uniform sampler2D texture; // color map
+varying texcoord;
  
 void main()
 {
@@ -9,7 +8,7 @@ void main()
     vec3 norm = normalize(eye_space_normal);
   vec3 empty = vec3(0.0,0.0,0.0);
   vec4 color = texture2D(texture, texcoord).rgba;
- gl_FragColor = vec4(shadeit(empty,color.rgb,color.rgb,color.rgb,color.x,eye_space_vertex,norm),1.0);
+ gl_FragColor = vec4(shadeit(empty,color,color,color,color.x,eye_space_vertex,norm),1.0);
   
 
 }

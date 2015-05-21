@@ -14,16 +14,6 @@ void main()
   vec4 vertex = gl_ModelViewMatrix * gl_Vertex;
   vec3 eye_space_vertex = vertex.xyz;
 
-  vec3 xer = vec3(1.0,0,0);
-  vec3 yer = vec3(0, 1.0, 0);
-  vec3 zer = vec3(0,0,1.0);
-
-  float xee = abs(dot(xer,gl_Normal));
-  float yee = abs(dot(yer, gl_Normal));
-  float zee = abs(dot(zer, gl_Normal));
-
-
   color = vec4(shadeit(emission,ambient,diffuse,specular,shininess,eye_space_vertex,eye_space_normal),1.0);
-  //color = vec4(xee, yee, zee ,1.0) ;
     gl_Position = gl_ProjectionMatrix * vertex;
 }

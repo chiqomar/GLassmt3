@@ -37,8 +37,8 @@ struct scenehdl
         texture = 5,
         multitx = 6,
         bumpmap = 7,
-        other = 8,
-        another = 9
+        toon = 8,
+        billboard = 9
     } shade_model;
 
 	// Whether or not to render the lights or the cameras or both

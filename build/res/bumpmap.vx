@@ -3,6 +3,8 @@
 varying vec2 texcoord;
 varying vec3 eye_space_normal;
 varying vec3 eye_space_vertex;
+uniform vec4 uv_tiling;
+
 
 void main()
 {

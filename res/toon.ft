@@ -1,5 +1,5 @@
 #version 120
-#include "lights.shd"
+#include "lightsTOON.shd"
 
 uniform vec3 emission;
 uniform vec3 ambient;
@@ -9,9 +9,10 @@ uniform float shininess;
 varying vec3 eye_space_normal;
 varying vec3 eye_space_vertex;
 
+
 void main()
 {
-  vec3 norm = normalize(eye_space_normal);
+    vec3 norm = normalize(eye_space_normal);
 
-  gl_FragColor = vec4(shadeit(emission,ambient,diffuse,specular,shininess,eye_space_vertex,norm),1.0);
+    gl_FragColor = vec4(shadeit(emission,ambient,diffuse,specular,shininess,eye_space_vertex,norm),1.0);
 }

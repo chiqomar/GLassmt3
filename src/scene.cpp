@@ -30,14 +30,8 @@ void scenehdl::draw()
 	if (active_camera_valid())
 		cameras[active_camera]->view();
 
-    for (int i = 0; i < lights.size(); i++) {
-//        int program;
-//        glGetIntegerv(GL_CURRENT_PROGRAM, &program);
-//        lights[i]->apply("anything", program);
-        lights[i]->update();
-
-    }
-		
+	for (int i = 0; i < lights.size(); i++)
+		lights[i]->update();
 
 	for (int i = 0; i < objects.size(); i++)
 		if (objects[i] != NULL)
@@ -54,7 +48,6 @@ void scenehdl::draw()
 
 			if ((!is_light && !is_camera) || (is_light && render_lights) || (is_camera && render_cameras))
 			{
-    
 				objects[i]->draw(lights);
 
 				if (render_normals == vertex || render_normals == face)
